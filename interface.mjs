@@ -1,7 +1,7 @@
-// interface.js
-const readline = require("readline");
+import { createInterface } from "readline";
+import { Graph } from "./grap.mjs";
 
-const rl = readline.createInterface({
+const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
@@ -25,22 +25,23 @@ async function getNumberOfNodes() {
   return num;
 }
 
-async function getGraphType() {
-  let type;
-  do {
-    type = await askQuestion(
-      "Enter the type of the graph (D for Directed/U for Undirected): "
-    );
-    type = type.toUpperCase();
-  } while (!["D", "U"].includes(type));
-  return type === "D" ? "Directed" : "Undirected";
-}
+// async function getGraphType() {
+//   let type;
+//   do {
+//     type = await askQuestion(
+//       "Enter the type of the graph (D for Directed/U for Undirected): "
+//     );
+//     type = type.toUpperCase();
+//   } while (!["D", "U"].includes(type));
+//   return type === "D" ? "Directed" : "Undirected";
+// }
 
 async function main() {
   const numberOfNodes = await getNumberOfNodes();
-  const graphType = await getGraphType();
+  // const graphType = await getGraphType();
 
-  console.log(`Creating a ${graphType} graph with ${numberOfNodes} nodes...`);
+  const newGraph = new Graph(numberOfNodes);
+  newGraph.displayMatrixAsTable();
 
   rl.close();
 }
