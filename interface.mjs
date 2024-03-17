@@ -17,11 +17,14 @@ function askQuestion(query) {
 }
 
 async function getNumberOfNodes() {
+  const maxValue = 15;
   let num;
   do {
-    num = await askQuestion("Enter the number of nodes for the graph (1-10): ");
+    num = await askQuestion(
+      `Enter the number of nodes for the graph (1-${maxValue}): `
+    );
     num = parseInt(num, 10);
-  } while (isNaN(num) || num < 1 || num > 10);
+  } while (isNaN(num) || num < 1 || num > maxValue);
   return num;
 }
 
@@ -40,8 +43,9 @@ async function main() {
   const numberOfNodes = await getNumberOfNodes();
   // const graphType = await getGraphType();
 
-  const newGraph = new Graph(numberOfNodes);
-  newGraph.displayMatrixAsTable();
+  const grafo = new Graph(numberOfNodes);
+
+  grafo.displayMatrixAsTable();
 
   rl.close();
 }

@@ -1,10 +1,10 @@
 export class Graph {
   constructor(size) {
     this.size = size;
-    this.matrix = this.createMatrix(size);
+    this.matrix = this.#initiateMatrix(size);
   }
 
-  createMatrix(size) {
+  #initiateMatrix(size) {
     let matrix = [];
     for (let i = 0; i < size; i++) {
       matrix[i] = [];
@@ -15,12 +15,15 @@ export class Graph {
     return matrix;
   }
 
+  linkNodes(nodeA, nodeB, numberOfLinks = 1) {
+    this.matrix[nodeA][nodeB] = numberOfLinks;
+  }
+
+  removeNode(nodeA, nodeB) {
+    this.matrix[nodeA][nodeB] = 0;
+  }
+
   displayMatrixAsTable() {
     console.table(this.matrix);
   }
 }
-
-// // Usage example:
-// const size = 5; // Define the desired size of the square matrix
-// const myMatrix = new Graph(size);
-// myMatrix.displayMatrixAsTable(); // Displays the matrix as a table in the console
