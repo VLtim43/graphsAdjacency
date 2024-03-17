@@ -45,36 +45,39 @@ async function manageGraphOptions(grafo) {
       case "1":
         let nodeA;
         do {
-          nodeA = await askQuestion(`[Enter the first Node]:`);
+          nodeA = await askQuestion(`➜ Enter the first Node:`);
         } while (isNaN(nodeA) || nodeA < 1 || nodeA > grafo.getSize());
 
         let nodeB;
         do {
-          nodeB = await askQuestion(`[Enter the second Node]:`);
+          nodeB = await askQuestion(`➜ Enter the second Node:`);
         } while (isNaN(nodeB) || nodeB < 1 || nodeB > grafo.getSize());
 
         grafo.linkNodes(parseInt(nodeA, 10), parseInt(nodeB, 10));
         break;
+
       case "2":
         const nodeAForDeletion = await askQuestion(
-          "Enter the source node for deletion: "
+          "➜ Enter the source node for deletion: "
         );
         const nodeBForDeletion = await askQuestion(
-          "Enter the target node for deletion: "
+          "➜ Enter the target node for deletion: "
         );
         grafo.removeNode(
           parseInt(nodeAForDeletion, 10),
           parseInt(nodeBForDeletion, 10)
         );
-        console.log("Link deleted.");
+        console.log("[Link deleted]");
         break;
+
       case "3":
         grafo.shuffle();
-        console.log("Matrix shuffled.");
         break;
+
       case "4":
         grafo.displayMatrixAsTable();
         break;
+
       case "5":
         exit = true;
         break;

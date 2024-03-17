@@ -28,8 +28,8 @@ export class Graph {
   }
 
   shuffle() {
-    for (let i = 0; i < this.size; i++) {
-      for (let j = 0; j < this.size; j++) {
+    for (let i = 1; i < this.size; i++) {
+      for (let j = 1; j < this.size; j++) {
         this.matrix[i][j] = Math.round(Math.random());
       }
     }
