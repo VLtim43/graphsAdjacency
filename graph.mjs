@@ -4,12 +4,16 @@ export class Graph {
     this.matrix = this.#initiateMatrix(size);
   }
 
+  getSize() {
+    return this.size;
+  }
+
   #initiateMatrix(size) {
     let matrix = [];
     for (let i = 0; i < size; i++) {
-      matrix[i] = [];
+      matrix[i + 1] = [];
       for (let j = 0; j < size; j++) {
-        matrix[i][j] = 0;
+        matrix[i + 1][j + 1] = 0;
       }
     }
     return matrix;
@@ -21,6 +25,14 @@ export class Graph {
 
   removeNode(nodeA, nodeB) {
     this.matrix[nodeA][nodeB] = 0;
+  }
+
+  shuffle() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        this.matrix[i][j] = Math.round(Math.random());
+      }
+    }
   }
 
   displayMatrixAsTable() {
