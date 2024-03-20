@@ -6,6 +6,27 @@ const rl = createInterface({
   output: process.stdout,
 });
 
+function letterToIndex(letter, size) {
+  const index = letter.charCodeAt(0) - 65;
+  return index >= 0 && index < size ? index : -1;
+}
+
+async function getNodeInput(promptMessage, size) {
+  let nodeLetter, nodeIndex;
+  do {
+    nodeLetter = (await askQuestion(promptMessage)).toUpperCase();
+    nodeIndex = letterToIndex(nodeLetter, size);
+    if (nodeIndex === -1) {
+      console.log(
+        `Invalid input. Please enter a letter between [A] and [${String.fromCharCode(
+          64 + size
+        )}].`
+      );
+    }
+  } while (nodeIndex === -1);
+  return nodeIndex;
+}
+
 console.log("┌───────────────────────────┐");
 console.log("│  Graph Console Interface  │");
 console.log("└───────────────────────────┘");
@@ -29,49 +50,72 @@ async function getNumberOfNodes() {
   return num;
 }
 
+async function getGraphType() {
+  let type;
+  do {
+    type = await askQuestion(
+      "➜ Choose the graph orientation - [Directed (D) or Undirected (U)]: "
+    );
+    type = type.toUpperCase();
+  } while (type !== "D" && type !== "U");
+  return type === "D" ? "directed" : "undirected";
+}
+
 async function manageGraphOptions(grafo) {
   let exit = false;
+  let orientation = grafo.getOrientation();
   do {
     console.log("➜ Choose an option ↴");
     console.log("[1] Create a link between two nodes");
     console.log("[2] Delete a link between two nodes");
     console.log("[3] Shuffle the matrix(random nodes)");
     console.log("[4] Display the matrix");
-    console.log("[5] Exit");
+
+    if (orientation === "directed") {
+      console.log("[5] Identify successor/predecessor for given Node");
+    }
+
+    if (orientation === "undirected") {
+      console.log("[5] Identify neighbourhood for given Node");
+    }
+
+    console.log("[6] Exit");
 
     const option = await askQuestion("|");
 
     switch (option) {
       case "1":
-        let nodeA;
-        do {
-          nodeA = await askQuestion(`➜ Enter the first Node:`);
-        } while (isNaN(nodeA) || nodeA < 1 || nodeA > grafo.getSize());
+      case "1":
+        const nodeAIndex = await getNodeInput(
+          `➜ Enter the first Node:`,
+          grafo.getSize()
+        );
+        const nodeBIndex = await getNodeInput(
+          `➜ Enter the second Node:`,
+          grafo.getSize()
+        );
 
-        let nodeB;
-        do {
-          nodeB = await askQuestion(`➜ Enter the second Node:`);
-        } while (isNaN(nodeB) || nodeB < 1 || nodeB > grafo.getSize());
-
-        grafo.linkNodes(parseInt(nodeA, 10), parseInt(nodeB, 10));
+        grafo.linkNodes(nodeAIndex, nodeBIndex);
+        console.log("[Link created]");
         break;
 
       case "2":
-        const nodeAForDeletion = await askQuestion(
-          "➜ Enter the source node for deletion: "
+        const nodeAForDeletionIndex = await getNodeInput(
+          "➜ Enter the source node for deletion: ",
+          grafo.getSize()
         );
-        const nodeBForDeletion = await askQuestion(
-          "➜ Enter the target node for deletion: "
+        const nodeBForDeletionIndex = await getNodeInput(
+          "➜ Enter the target node for deletion: ",
+          grafo.getSize()
         );
-        grafo.removeNode(
-          parseInt(nodeAForDeletion, 10),
-          parseInt(nodeBForDeletion, 10)
-        );
+
+        grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
         console.log("[Link deleted]");
         break;
 
       case "3":
         grafo.shuffle();
+        grafo.displayMatrixAsTable();
         break;
 
       case "4":
@@ -79,6 +123,9 @@ async function manageGraphOptions(grafo) {
         break;
 
       case "5":
+        break;
+
+      case "6":
         exit = true;
         break;
       default:
@@ -89,7 +136,8 @@ async function manageGraphOptions(grafo) {
 
 async function main() {
   const numberOfNodes = await getNumberOfNodes();
-  const grafo = new Graph(numberOfNodes);
+  const orientation = await getGraphType();
+  const grafo = new Graph(numberOfNodes, orientation);
   await manageGraphOptions(grafo);
   rl.close();
 }
