@@ -1,6 +1,7 @@
 import { createInterface } from "readline";
 import { Graph } from "./graph.mjs";
 import { Colors } from "./colors.mjs";
+import { colorText } from "./colors.mjs";
 
 const rl = createInterface({
   input: process.stdin,
@@ -34,7 +35,7 @@ console.log("└─────────────────────�
 
 function askQuestion(query) {
   return new Promise((resolve) => {
-    rl.question(query, (answer) => {
+    rl.question(colorText(query, Colors.fg.white), (answer) => {
       resolve(answer);
     });
   });
@@ -126,12 +127,16 @@ async function manageGraphOptions(grafo) {
 
   do {
     console.log("➜ Choose an option ↴");
-    options.forEach((option, index) =>
-      console.log(`[${index + 1}] ${option.description}`)
-    );
-    console.log(`[${options.length + 1}] Exit`);
 
-    const optionIndex = await askQuestion("|");
+    console.log("┌────────────────────────────────────────────────────────┐");
+    options.forEach((option, index) =>
+      console.log(`│ [${index + 1}] ${option.description}`)
+    );
+    console.log(`│ [${options.length + 1}] Exit`);
+    console.log("└────────────────────────────────────────────────────────┘");
+
+    console.log(">");
+    const optionIndex = await askQuestion(">");
     const selectedOption = options[optionIndex - 1];
 
     if (optionIndex == options.length + 1) {
@@ -149,9 +154,21 @@ async function getNumberOfNodes() {
   let num;
   do {
     num = await askQuestion(
-      `➜ Enter the number of nodes for the graph [1-${maxValue}]: `
+      colorText(
+        `➜ Enter the number of nodes for the graph (1-${maxValue}): `,
+        Colors.fg.white
+      )
     );
     num = parseInt(num, 10);
+
+    if (isNaN(num) || num < 1 || num > maxValue) {
+      console.log(
+        colorText(
+          "Error: Number is out of bounds or is not a valid number",
+          Colors.fg.red
+        )
+      );
+    }
   } while (isNaN(num) || num < 1 || num > maxValue);
   return num;
 }

@@ -31,3 +31,7 @@ export const Colors = {
     crimson: "\x1b[48m",
   },
 };
+
+export const colorText = (text, colorCode) => {
+  return `${colorCode}${text}${Colors.reset}`;
+};
