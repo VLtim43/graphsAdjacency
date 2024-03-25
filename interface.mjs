@@ -1,5 +1,6 @@
 import { createInterface } from "readline";
 import { Graph } from "./graph.mjs";
+import { Colors } from "./colors.mjs";
 
 const rl = createInterface({
   input: process.stdin,
@@ -30,6 +31,7 @@ async function getNodeInput(promptMessage, size) {
 console.log("┌───────────────────────────┐");
 console.log("│  Graph Console Interface  │");
 console.log("└───────────────────────────┘");
+
 function askQuestion(query) {
   return new Promise((resolve) => {
     rl.question(query, (answer) => {
@@ -50,7 +52,7 @@ async function getNumberOfNodes() {
   return num;
 }
 
-async function getGraphType() {
+async function getGraphOrientation() {
   let type;
   do {
     type = await askQuestion(
@@ -58,7 +60,7 @@ async function getGraphType() {
     );
     type = type.toUpperCase();
   } while (type !== "D" && type !== "U");
-  return type === "D" ? "directed" : "undirected";
+  return type;
 }
 
 async function manageGraphOptions(grafo) {
@@ -71,11 +73,11 @@ async function manageGraphOptions(grafo) {
     console.log("[3] Shuffle the matrix(random nodes)");
     console.log("[4] Display the matrix");
 
-    if (orientation === "directed") {
+    if (orientation === "D") {
       console.log("[5] Identify successor/predecessor for given Node");
     }
 
-    if (orientation === "undirected") {
+    if (orientation === "U") {
       console.log("[5] Identify neighbourhood for given Node");
     }
 
@@ -84,7 +86,6 @@ async function manageGraphOptions(grafo) {
     const option = await askQuestion("|");
 
     switch (option) {
-      case "1":
       case "1":
         const nodeAIndex = await getNodeInput(
           `➜ Enter the first Node:`,
@@ -123,6 +124,12 @@ async function manageGraphOptions(grafo) {
         break;
 
       case "5":
+        const givenNode = await getNodeInput(
+          "➜ Enter the Node: ",
+          grafo.getSize()
+        );
+        grafo.neighbourhood(givenNode);
+
         break;
 
       case "6":
@@ -136,7 +143,7 @@ async function manageGraphOptions(grafo) {
 
 async function main() {
   const numberOfNodes = await getNumberOfNodes();
-  const orientation = await getGraphType();
+  const orientation = await getGraphOrientation();
   const grafo = new Graph(numberOfNodes, orientation);
   await manageGraphOptions(grafo);
   rl.close();

@@ -1,14 +1,8 @@
-const GraphOrientation = {
-  DIRECTED: "directed",
-  UNDIRECTED: "undirected",
-};
-
 export class Graph {
   constructor(size, orientation) {
     this.size = size;
     this.matrix = this.#initiateMatrix(size);
-    this.orientation =
-      GraphOrientation[orientation] || GraphOrientation.UNDIRECTED;
+    this.orientation = orientation;
   }
 
   getSize() {
@@ -32,7 +26,7 @@ export class Graph {
 
   linkNodes(nodeA, nodeB, numberOfLinks = 1) {
     this.matrix[nodeA][nodeB] = numberOfLinks;
-    if (this.orientation === GraphOrientation.UNDIRECTED) {
+    if (this.orientation === "U") {
       this.matrix[nodeB][nodeA] = numberOfLinks;
     }
   }
@@ -43,12 +37,14 @@ export class Graph {
 
   neighbourhood(node) {
     let connectedNodes = [];
-
-    if (this.orientation === GraphOrientation.UNDIRECTED) {
-      console.log("test");
+    for (let i = 0; i < this.size; i++) {
+      if (this.matrix[node][i] > 0) {
+        connectedNodes.push(String.fromCharCode(65 + i));
+      }
     }
 
-    return [];
+    console.log(connectedNodes);
+    return connectedNodes;
   }
 
   shuffle() {
@@ -60,7 +56,9 @@ export class Graph {
   }
 
   displayMatrixAsTable() {
-    const symbol = this.orientation === GraphOrientation.DIRECTED ? "→" : "○";
+    const symbol = this.orientation === "D" ? "→" : "○";
+
+    console.log(this.orientation);
     console.log(`[${symbol}]`);
 
     let labeledMatrix = this.matrix.map((row) => {
