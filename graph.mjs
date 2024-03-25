@@ -47,6 +47,8 @@ export class Graph {
     return connectedNodes;
   }
 
+  precessorSucessor(node) {}
+
   shuffle() {
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
@@ -58,7 +60,6 @@ export class Graph {
   displayMatrixAsTable() {
     const symbol = this.orientation === "D" ? "→" : "○";
 
-    console.log(this.orientation);
     console.log(`[${symbol}]`);
 
     let labeledMatrix = this.matrix.map((row) => {
@@ -77,5 +78,21 @@ export class Graph {
     });
 
     console.table(labeledRows);
+  }
+
+  displayAdjacencyList() {
+    console.log("-------------------------------");
+    for (let i = 0; i < this.size; i++) {
+      let listRepresentation = `[${String.fromCharCode(65 + i)}]`;
+
+      for (let j = 0; j < this.size; j++) {
+        if (this.matrix[i][j] > 0) {
+          listRepresentation += `→[${String.fromCharCode(65 + j)}]`;
+        }
+      }
+
+      console.log(listRepresentation);
+    }
+    console.log("-------------------------------");
   }
 }

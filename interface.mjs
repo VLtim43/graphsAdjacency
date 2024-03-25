@@ -40,12 +40,116 @@ function askQuestion(query) {
   });
 }
 
+async function manageGraphOptions(grafo) {
+  let exit = false;
+  let orientation = grafo.getOrientation();
+
+  const options = [
+    {
+      description: "Create a link between two nodes",
+      action: async () => {
+        const nodeAIndex = await getNodeInput(
+          `➜ Enter the first Node:`,
+          grafo.getSize()
+        );
+        const nodeBIndex = await getNodeInput(
+          `➜ Enter the second Node:`,
+          grafo.getSize()
+        );
+        grafo.linkNodes(nodeAIndex, nodeBIndex);
+        console.log("[Link created]");
+      },
+    },
+    {
+      description: "Delete a link between two nodes",
+      action: async () => {
+        const nodeAForDeletionIndex = await getNodeInput(
+          "➜ Enter the source node for deletion: ",
+          grafo.getSize()
+        );
+        const nodeBForDeletionIndex = await getNodeInput(
+          "➜ Enter the target node for deletion: ",
+          grafo.getSize()
+        );
+        grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
+        console.log("[Link deleted]");
+      },
+    },
+    {
+      description: "Display the matrix",
+      action: () => {
+        grafo.displayMatrixAsTable();
+      },
+    },
+    {
+      description: "Display as adjacency list",
+      action: () => {
+        grafo.displayAdjacencyList();
+      },
+    },
+  ];
+
+  if (orientation === "D") {
+    options.push({
+      description: "Identify successor/predecessor for given Node",
+      action: async () => {
+        const givenNode = await getNodeInput(
+          "➜ Enter the Node: ",
+          grafo.getSize()
+        );
+        grafo.neighbourhood(givenNode);
+      },
+    });
+  }
+
+  if (orientation === "U") {
+    options.push({
+      description: "Identify neighbourhood for given Node",
+      action: async () => {
+        const givenNode = await getNodeInput(
+          "➜ Enter the Node: ",
+          grafo.getSize()
+        );
+        grafo.neighbourhood(givenNode);
+      },
+    });
+  }
+
+  options.push({
+    description: "Shuffle the matrix (random nodes)",
+    action: () => {
+      grafo.shuffle();
+      console.log("[Matrix shuffled]");
+      grafo.displayMatrixAsTable();
+    },
+  });
+
+  do {
+    console.log("➜ Choose an option ↴");
+    options.forEach((option, index) =>
+      console.log(`[${index + 1}] ${option.description}`)
+    );
+    console.log(`[${options.length + 1}] Exit`);
+
+    const optionIndex = await askQuestion("|");
+    const selectedOption = options[optionIndex - 1];
+
+    if (optionIndex == options.length + 1) {
+      exit = true;
+    } else if (selectedOption) {
+      await selectedOption.action();
+    } else {
+      console.log("Invalid option, please choose again.");
+    }
+  } while (!exit);
+}
+
 async function getNumberOfNodes() {
   const maxValue = 15;
   let num;
   do {
     num = await askQuestion(
-      `➜ Enter the number of nodes for the graph (1-${maxValue}): `
+      `➜ Enter the number of nodes for the graph [1-${maxValue}]: `
     );
     num = parseInt(num, 10);
   } while (isNaN(num) || num < 1 || num > maxValue);
@@ -61,84 +165,6 @@ async function getGraphOrientation() {
     type = type.toUpperCase();
   } while (type !== "D" && type !== "U");
   return type;
-}
-
-async function manageGraphOptions(grafo) {
-  let exit = false;
-  let orientation = grafo.getOrientation();
-  do {
-    console.log("➜ Choose an option ↴");
-    console.log("[1] Create a link between two nodes");
-    console.log("[2] Delete a link between two nodes");
-    console.log("[3] Shuffle the matrix(random nodes)");
-    console.log("[4] Display the matrix");
-
-    if (orientation === "D") {
-      console.log("[5] Identify successor/predecessor for given Node");
-    }
-
-    if (orientation === "U") {
-      console.log("[5] Identify neighbourhood for given Node");
-    }
-
-    console.log("[6] Exit");
-
-    const option = await askQuestion("|");
-
-    switch (option) {
-      case "1":
-        const nodeAIndex = await getNodeInput(
-          `➜ Enter the first Node:`,
-          grafo.getSize()
-        );
-        const nodeBIndex = await getNodeInput(
-          `➜ Enter the second Node:`,
-          grafo.getSize()
-        );
-
-        grafo.linkNodes(nodeAIndex, nodeBIndex);
-        console.log("[Link created]");
-        break;
-
-      case "2":
-        const nodeAForDeletionIndex = await getNodeInput(
-          "➜ Enter the source node for deletion: ",
-          grafo.getSize()
-        );
-        const nodeBForDeletionIndex = await getNodeInput(
-          "➜ Enter the target node for deletion: ",
-          grafo.getSize()
-        );
-
-        grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
-        console.log("[Link deleted]");
-        break;
-
-      case "3":
-        grafo.shuffle();
-        grafo.displayMatrixAsTable();
-        break;
-
-      case "4":
-        grafo.displayMatrixAsTable();
-        break;
-
-      case "5":
-        const givenNode = await getNodeInput(
-          "➜ Enter the Node: ",
-          grafo.getSize()
-        );
-        grafo.neighbourhood(givenNode);
-
-        break;
-
-      case "6":
-        exit = true;
-        break;
-      default:
-        console.log("Invalid option, please choose again.");
-    }
-  } while (!exit);
 }
 
 async function main() {
