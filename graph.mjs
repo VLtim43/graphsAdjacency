@@ -1,3 +1,6 @@
+import { Colors } from "./colors.mjs";
+import { colorText } from "./colors.mjs";
+
 export class Graph {
   constructor(size, orientation) {
     this.size = size;
@@ -35,6 +38,7 @@ export class Graph {
     this.matrix[nodeA][nodeB] = 0;
   }
 
+  //only for undirected nodes
   neighbourhood(node) {
     let connectedNodes = [];
     for (let i = 0; i < this.size; i++) {
@@ -47,7 +51,38 @@ export class Graph {
     return connectedNodes;
   }
 
-  precessorSucessor(node) {}
+  predecessorSuccessor(node) {
+    if (this.orientation !== "D") {
+      console.log("This operation is only valid for directed graphs.");
+      return;
+    }
+
+    let predecessors = [];
+    let successors = [];
+
+    for (let i = 0; i < this.size; i++) {
+      if (this.matrix[node][i] > 0) {
+        // If there is a link from 'node' to 'i'
+        successors.push(String.fromCharCode(65 + i));
+      }
+    }
+
+    for (let i = 0; i < this.size; i++) {
+      if (this.matrix[i][node] > 0) {
+        // If there is a link to 'node' from 'i'
+        predecessors.push(String.fromCharCode(65 + i));
+      }
+    }
+
+    console.log(
+      `Predecessors of [${String.fromCharCode(65 + node)}]: `,
+      predecessors
+    );
+    console.log(
+      `Successors of [${String.fromCharCode(65 + node)}]: `,
+      successors
+    );
+  }
 
   shuffle() {
     for (let i = 0; i < this.size; i++) {
@@ -57,10 +92,10 @@ export class Graph {
     }
   }
 
-  displayMatrixAsTable() {
-    const symbol = this.orientation === "D" ? "→" : "○";
+  //display graph
 
-    console.log(`[${symbol}]`);
+  displayMatrixAsTable() {
+    console.log(`[${this.orientation === "D" ? "→" : "○"}]`);
 
     let labeledMatrix = this.matrix.map((row) => {
       let rowObject = {};
@@ -81,9 +116,13 @@ export class Graph {
   }
 
   displayAdjacencyList() {
-    console.log("-------------------------------");
+    console.log(`[${this.orientation === "D" ? "→" : "○"}]`);
+
     for (let i = 0; i < this.size; i++) {
-      let listRepresentation = `[${String.fromCharCode(65 + i)}]`;
+      let listRepresentation = colorText(
+        `[${String.fromCharCode(65 + i)}]`,
+        Colors.fg.green
+      );
 
       for (let j = 0; j < this.size; j++) {
         if (this.matrix[i][j] > 0) {
@@ -93,6 +132,5 @@ export class Graph {
 
       console.log(listRepresentation);
     }
-    console.log("-------------------------------");
   }
 }

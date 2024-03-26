@@ -20,9 +20,12 @@ async function getNodeInput(promptMessage, size) {
     nodeIndex = letterToIndex(nodeLetter, size);
     if (nodeIndex === -1) {
       console.log(
-        `Invalid input. Please enter a letter between [A] and [${String.fromCharCode(
-          64 + size
-        )}].`
+        colorText(
+          `Invalid input. Please enter a letter between [A] and [${String.fromCharCode(
+            64 + size
+          )}].`,
+          Colors.fg.red
+        )
       );
     }
   } while (nodeIndex === -1);
@@ -58,7 +61,11 @@ async function manageGraphOptions(grafo) {
           grafo.getSize()
         );
         grafo.linkNodes(nodeAIndex, nodeBIndex);
-        console.log("[Link created]");
+        console.log(
+          `[${String.fromCharCode(65 + nodeAIndex)}]→[${String.fromCharCode(
+            65 + nodeBIndex
+          )}] created`
+        );
       },
     },
     {
@@ -73,17 +80,21 @@ async function manageGraphOptions(grafo) {
           grafo.getSize()
         );
         grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
-        console.log("[Link deleted]");
+        console.log(
+          `[${String.fromCharCode(
+            65 + nodeAForDeletionIndex
+          )}]→[${String.fromCharCode(65 + nodeBForDeletionIndex)}] deleted`
+        );
       },
     },
     {
-      description: "Display the matrix",
+      description: "Display as Adjacency Matrix",
       action: () => {
         grafo.displayMatrixAsTable();
       },
     },
     {
-      description: "Display as adjacency list",
+      description: "Display as Adjacency list",
       action: () => {
         grafo.displayAdjacencyList();
       },
@@ -98,7 +109,7 @@ async function manageGraphOptions(grafo) {
           "➜ Enter the Node: ",
           grafo.getSize()
         );
-        grafo.neighbourhood(givenNode);
+        grafo.predecessorSuccessor(givenNode);
       },
     });
   }
@@ -121,7 +132,7 @@ async function manageGraphOptions(grafo) {
     action: () => {
       grafo.shuffle();
       console.log("[Matrix shuffled]");
-      grafo.displayMatrixAsTable();
+      // grafo.displayAdjacencyList();
     },
   });
 
@@ -135,8 +146,7 @@ async function manageGraphOptions(grafo) {
     console.log(`│ [${options.length + 1}] Exit`);
     console.log("└────────────────────────────────────────────────────────┘");
 
-    console.log(">");
-    const optionIndex = await askQuestion(">");
+    const optionIndex = await askQuestion("> ");
     const selectedOption = options[optionIndex - 1];
 
     if (optionIndex == options.length + 1) {
@@ -144,24 +154,25 @@ async function manageGraphOptions(grafo) {
     } else if (selectedOption) {
       await selectedOption.action();
     } else {
-      console.log("Invalid option, please choose again.");
+      console.log(colorText("Error: Invalid option", Colors.fg.red));
     }
   } while (!exit);
 }
+6;
 
 async function getNumberOfNodes() {
   const maxValue = 15;
   let num;
   do {
-    num = await askQuestion(
+    let input = await askQuestion(
       colorText(
         `➜ Enter the number of nodes for the graph (1-${maxValue}): `,
         Colors.fg.white
       )
     );
-    num = parseInt(num, 10);
+    num = parseInt(input, 10);
 
-    if (isNaN(num) || num < 1 || num > maxValue) {
+    if (!Number.isInteger(num) || num < 1 || num > maxValue) {
       console.log(
         colorText(
           "Error: Number is out of bounds or is not a valid number",
@@ -169,7 +180,7 @@ async function getNumberOfNodes() {
         )
       );
     }
-  } while (isNaN(num) || num < 1 || num > maxValue);
+  } while (!Number.isInteger(num) || num < 1 || num > maxValue);
   return num;
 }
 
@@ -181,6 +192,7 @@ async function getGraphOrientation() {
     );
     type = type.toUpperCase();
   } while (type !== "D" && type !== "U");
+  console.log(type === "D" ? "[Directed Graph →]" : "[Undirected Graph ○]");
   return type;
 }
 
