@@ -135,12 +135,17 @@ async function manageGraphOptions(grafo) {
       action: () => {
         console.log(
           colorText(
-            "╔═════════════════════════════════════════════════════════════╗",
+            "╔══════════════════════════════════════════════════════════════",
             Colors.fg.cyan
           )
         );
         grafo.displayMatrixAsTable();
-        console.log(colorText("═════════════════════════════", Colors.fg.cyan));
+        console.log(
+          colorText(
+            "╚══════════════════════════════════════════════════════════════",
+            Colors.fg.cyan
+          )
+        );
       },
     },
     {
@@ -153,7 +158,33 @@ async function manageGraphOptions(grafo) {
           )
         );
         grafo.displayAdjacencyList();
-        console.log(colorText("═════════════════════════════", Colors.fg.cyan));
+        console.log(
+          colorText(
+            "╚═════════════════════════════════════════════════════════════╝",
+            Colors.fg.cyan
+          )
+        );
+      },
+    },
+
+    {
+      description: "Identify the degree of a Node",
+      action: async () => {
+        const node = await getNodeInput(
+          colorText(`[➜] Enter the first Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+
+        grafo.nodeDegree(node);
+      },
+    },
+
+    {
+      description: "Check graph characteristics",
+      action: async () => {
+        grafo.checkSimpleGraph();
+        grafo.checkRegularGraph();
+        grafo.checkComplete();
       },
     },
   ];
@@ -163,7 +194,7 @@ async function manageGraphOptions(grafo) {
       description: "Identify successor/predecessor for given Node",
       action: async () => {
         const givenNode = await getNodeInput(
-          "➜ Enter the Node: ",
+          colorText(`[➜] Enter the Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
         grafo.predecessorSuccessor(givenNode);
@@ -176,7 +207,7 @@ async function manageGraphOptions(grafo) {
       description: "Identify neighbourhood for given Node",
       action: async () => {
         const givenNode = await getNodeInput(
-          "➜ Enter the Node: ",
+          colorText(`[➜] Enter the Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
         grafo.neighbourhood(givenNode);
@@ -188,8 +219,7 @@ async function manageGraphOptions(grafo) {
     description: "Shuffle the matrix (random nodes)",
     action: () => {
       grafo.shuffle();
-      console.log("[Matrix shuffled]");
-      // grafo.displayAdjacencyList();
+      console.log(colorText("[Matrix shuffled] ↺", Colors.fg.darkMagenta));
     },
   });
 

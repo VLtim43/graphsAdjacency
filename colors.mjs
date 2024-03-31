@@ -8,6 +8,7 @@ export const Colors = {
   hidden: "\x1b[8m",
 
   fg: {
+    // Existing colors
     pink: "\x1b[35m",
     green: "\x1b[32m",
     yellow: "\x1b[33m",
@@ -20,6 +21,17 @@ export const Colors = {
     lightPink: "\x1b[38;5;211m",
     darkMagenta: "\x1b[38;5;127m",
     lightLavender: "\x1b[38;5;189m",
+    // Additional shades of green
+    lightGreen: "\x1b[38;5;120m", // A brighter, lighter green
+    darkGreen: "\x1b[38;5;22m", // A darker, more subdued green
+    oliveGreen: "\x1b[38;5;58m", // A darker, yellowish-green, resembling olive
+    neonGreen: "\x1b[38;5;82m", // A vibrant, almost neon green
+    seaGreen: "\x1b[38;5;85m", // A green with a slight hint of blue, reminiscent of sea green
+
+    brightOrange: "\x1b[38;5;214m", // A bright, vivid orange
+    darkOrange: "\x1b[38;5;202m", // A darker, more muted orange
+    pastelOrange: "\x1b[38;5;216m", // A softer, pastel-like orange
+    goldOrange: "\x1b[38;5;220m", // A golden orange, with a yellowish tint
   },
 
   bg: {

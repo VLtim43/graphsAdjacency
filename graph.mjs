@@ -75,7 +75,7 @@ export class Graph {
         `[${indexToLabel(nodeA)}]${
           this.orientation === "U" ? "↔" : "→"
         }[${indexToLabel(nodeB)}] created`,
-        Colors.fg.cyan
+        Colors.fg.seaGreen
       )
     );
   }
@@ -97,7 +97,7 @@ export class Graph {
           `No link between [${indexToLabel(nodeA)}] and [${indexToLabel(
             nodeB
           )}] found`,
-          Colors.fg.yellow
+          Colors.fg.goldOrange
         )
       );
       return;
@@ -113,7 +113,7 @@ export class Graph {
         `[${indexToLabel(nodeA)}]${
           this.orientation === "U" ? "↔" : "→"
         }[${indexToLabel(nodeB)}] deleted`,
-        Colors.fg.cyan
+        Colors.fg.darkOrange
       )
     );
   }
@@ -126,13 +126,23 @@ export class Graph {
       }
     }
 
-    console.log(connectedNodes);
-    return connectedNodes;
+    console.log(
+      colorText(
+        `Nodes in the neighbourhood of [${indexToLabel(node)}]: ` +
+          connectedNodes,
+        Colors.fg.beige
+      )
+    );
   }
 
   predecessorSuccessor(node) {
     if (this.orientation !== "D") {
-      console.log("This operation is only valid for directed graphs.");
+      console.log(
+        colorText(
+          "Error: Operation not valid for this type of graph",
+          Colors.fg.red
+        )
+      );
       return;
     }
 
@@ -148,8 +158,49 @@ export class Graph {
       }
     }
 
-    console.log(`Predecessors of [${indexToLabel(node)}]: `, predecessors);
-    console.log(`Successors of [${indexToLabel(node)}]: `, successors);
+    console.log(
+      colorText(
+        `Sucessors of [${indexToLabel(node)}]: ` + successors,
+        Colors.fg.beige
+      )
+    );
+
+    console.log(
+      colorText(
+        `Predecessors of [${indexToLabel(node)}]: ` + predecessors,
+        Colors.fg.beige
+      )
+    );
+  }
+
+  nodeDegree(node) {
+    if (node < 0 || node >= this.size) {
+      console.log(colorText("Error: The node does not exist.", Colors.fg.red));
+      return;
+    }
+
+    let degree = 0;
+
+    for (let i = 0; i < this.size; i++) {
+      if (this.matrix[node][i] > 0) {
+        degree++;
+      }
+    }
+
+    if (this.orientation === "D") {
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[i][node] > 0 && i !== node) {
+          degree++;
+        }
+      }
+    }
+
+    console.log(
+      colorText(
+        `Degree of node [${indexToLabel(node)}]: ${degree}`,
+        Colors.fg.seaGreen
+      )
+    );
   }
 
   shuffle() {
@@ -181,16 +232,80 @@ export class Graph {
     for (let i = 0; i < this.size; i++) {
       let listRepresentation = colorText(
         `[${indexToLabel(i)}]`,
-        Colors.fg.green
+        Colors.fg.seaGreen
       );
 
       for (let j = 0; j < this.size; j++) {
         if (this.matrix[i][j] > 0) {
-          listRepresentation += `→[${indexToLabel(j)}]`;
+          listRepresentation += colorText(
+            `→[${indexToLabel(j)}]`,
+            Colors.fg.beige
+          );
         }
       }
 
-      console.log(listRepresentation);
+      console.log(colorText("║ ", Colors.fg.cyan) + listRepresentation);
     }
+  }
+
+  // simple = no loops & multi edges
+  checkSimpleGraph() {
+    for (let i = 0; i < this.size; i++) {
+      if (this.matrix[i][i] !== 0) {
+        console.log(
+          colorText("[x] Graph is not simple: found a loop", Colors.fg.red)
+        );
+        return false;
+      }
+    }
+
+    // I did not implemented multigraphs idk
+    // for (let i = 0; i < this.size; i++) {
+    //   for (let j = 0; j < this.size; j++) {
+    //     if (this.matrix[i][j] !== 0 && this.matrix[i][j] !== 1) {
+    //       console.log(
+    //         colorText(
+    //           "Graph is not simple: found multiple edges",
+    //           Colors.fg.red
+    //         )
+    //       );
+    //       return false;
+    //     }
+    //   }
+    // }
+
+    console.log(colorText("[✓] Graph is simple", Colors.fg.seaGreen));
+  }
+
+  // regular = all nodes have the same number of links
+  checkRegularGraph() {
+    let degree = this.matrix[0].reduce((acc, val) => acc + val, 0);
+
+    for (let i = 1; i < this.size; i++) {
+      let currentDegree = this.matrix[i].reduce((acc, val) => acc + val, 0);
+      if (currentDegree !== degree) {
+        console.log(colorText("[x] Graph is not regular.", Colors.fg.red));
+        return false;
+      }
+    }
+
+    console.log(colorText("[✓] Graph is regular.", Colors.fg.seaGreen));
+  }
+
+  // complete = all nodes are connected, excluding loops
+  checkComplete() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        if (i === j) continue;
+
+        if (this.matrix[i][j] !== 1) {
+          console.log(colorText("[x] Graph is not complete", Colors.fg.red));
+          return false;
+        }
+      }
+    }
+
+    console.log(colorText("[✓] Graph is complete", Colors.fg.seaGreen));
+    return true;
   }
 }
