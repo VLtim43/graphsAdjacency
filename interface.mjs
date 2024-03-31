@@ -1,5 +1,5 @@
 import { createInterface } from "readline";
-import { Graph } from "./graph.mjs";
+import { Graph, indexToLabel } from "./graph.mjs";
 import { Colors } from "./colors.mjs";
 import { colorText } from "./colors.mjs";
 
@@ -8,33 +8,42 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-function letterToIndex(letter, size) {
-  const index = letter.charCodeAt(0) - 65;
-  return index >= 0 && index < size ? index : -1;
+function letterToIndex(label) {
+  let index = 0;
+  for (let i = 0; i < label.length; i++) {
+    index = index * 26 + (label.charCodeAt(i) - "A".charCodeAt(0) + 1);
+  }
+  return index - 1;
 }
 
 async function getNodeInput(promptMessage, size) {
-  let nodeLetter, nodeIndex;
+  let nodeLabel, nodeIndex;
   do {
-    nodeLetter = (await askQuestion(promptMessage)).toUpperCase();
-    nodeIndex = letterToIndex(nodeLetter, size);
-    if (nodeIndex === -1) {
+    nodeLabel = (await askQuestion(promptMessage)).toUpperCase();
+    nodeIndex = letterToIndex(nodeLabel);
+    if (nodeIndex < 0 || nodeIndex >= size) {
       console.log(
         colorText(
-          `Invalid input. Please enter a letter between [A] and [${String.fromCharCode(
-            64 + size
+          `Invalid input. Please enter a label between [A] and [${indexToLabel(
+            size - 1
           )}].`,
           Colors.fg.red
         )
       );
     }
-  } while (nodeIndex === -1);
+  } while (nodeIndex < 0 || nodeIndex >= size);
   return nodeIndex;
 }
 
-console.log(colorText("╔═════════════════════════════╗", Colors.fg.lavender));
-console.log(colorText("║   Graph Console Interface   ║", Colors.fg.lavender));
-console.log(colorText("╚═════════════════════════════╝ ", Colors.fg.lavender));
+console.log(
+  colorText("╔═════════════════════════════╗", Colors.fg.lightLavender)
+);
+console.log(
+  colorText("║   Graph Console Interface   ║", Colors.fg.lightLavender)
+);
+console.log(
+  colorText("╚═════════════════════════════╝ ", Colors.fg.lightLavender)
+);
 
 function askQuestion(query) {
   return new Promise((resolve) => {
@@ -45,13 +54,13 @@ function askQuestion(query) {
 }
 
 async function getNumberOfNodes() {
-  const maxValue = 15;
+  const maxValue = 702;
   let num;
   do {
     let input = await askQuestion(
       colorText(
         `[➜] Enter the number of nodes for the graph «1-${maxValue}»: `,
-        Colors.fg.lavender
+        Colors.fg.lightLavender
       )
     );
     num = parseInt(input, 10);
@@ -65,7 +74,6 @@ async function getNumberOfNodes() {
       console.log(
         colorText(
           "Error: Number is out of bounds or is not a valid number",
-          Colors.fg.white,
           Colors.bg.red
         )
       );
@@ -81,18 +89,18 @@ async function getGraphOrientation() {
     type = await askQuestion(
       colorText(
         "[➜] Choose the graph orientation «Directed[D]/Undirected[U]»: ",
-        Colors.fg.lavender
+        Colors.fg.lightLavender
       )
     );
     type = type.toUpperCase();
     if (type !== "D" && type !== "U") {
-      console.log(colorText("Error: Invalid option", Colors.fg.red));
+      console.log(colorText("Error: Invalid option", Colors.bg.red));
     }
   } while (type !== "D" && type !== "U");
   console.log(
     type === "D"
-      ? colorText("[Directed Graph →]", Colors.fg.beige)
-      : colorText("[Undirected Graph ○]", Colors.fg.beige)
+      ? colorText("[Directed Graph →]", Colors.fg.cyan)
+      : colorText("[Undirected Graph ○]", Colors.fg.cyan)
   );
   return type;
 }
@@ -115,9 +123,7 @@ async function manageGraphOptions(grafo) {
         );
         grafo.linkNodes(nodeAIndex, nodeBIndex);
         console.log(
-          `[${String.fromCharCode(65 + nodeAIndex)}]→[${String.fromCharCode(
-            65 + nodeBIndex
-          )}] created`
+          `[${indexToLabel(nodeAIndex)}]→[${indexToLabel(nodeBIndex)}] created`
         );
       },
     },
@@ -134,22 +140,36 @@ async function manageGraphOptions(grafo) {
         );
         grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
         console.log(
-          `[${String.fromCharCode(
-            65 + nodeAForDeletionIndex
-          )}]→[${String.fromCharCode(65 + nodeBForDeletionIndex)}] deleted`
+          `[${indexToLabel(nodeAForDeletionIndex)}]→[${indexToLabel(
+            nodeBForDeletionIndex
+          )}] deleted`
         );
       },
     },
     {
-      description: "Display as Adjacency Matrix",
+      description: "Display as Matrix",
       action: () => {
+        console.log(
+          colorText(
+            "╔═════════════════════════════════════════════════════════════╗",
+            Colors.fg.cyan
+          )
+        );
         grafo.displayMatrixAsTable();
+        console.log(colorText("═════════════════════════════", Colors.fg.cyan));
       },
     },
     {
-      description: "Display as Adjacency list",
+      description: "Display as list",
       action: () => {
+        console.log(
+          colorText(
+            "╔═════════════════════════════════════════════════════════════╗",
+            Colors.fg.cyan
+          )
+        );
         grafo.displayAdjacencyList();
+        console.log(colorText("═════════════════════════════", Colors.fg.cyan));
       },
     },
   ];
@@ -190,16 +210,33 @@ async function manageGraphOptions(grafo) {
   });
 
   do {
-    console.log(colorText("[➜] Choose an option ↴", Colors.fg.pink));
+    console.log(colorText("[➜] Choose an option ↴", Colors.fg.lightLavender));
 
-    console.log("┌────────────────────────────────────────────────────────┐");
-    options.forEach((option, index) =>
-      console.log(`│ [${index + 1}] ${option.description}`)
+    console.log(
+      colorText(
+        "╔═════════════════════════════════════════════════════════════╗",
+        Colors.fg.lightLavender
+      )
     );
-    console.log(`│ [${options.length + 1}] Exit`);
-    console.log("└────────────────────────────────────────────────────────┘");
+    options.forEach((option, index) =>
+      console.log(
+        colorText(
+          `║ [${index + 1}] ${option.description}`,
+          Colors.fg.lightLavender
+        )
+      )
+    );
+    console.log(
+      colorText(`║ [${options.length + 1}] Exit`, Colors.fg.lightLavender)
+    );
+    console.log(
+      colorText(
+        "╚═════════════════════════════════════════════════════════════╝",
+        Colors.fg.lightLavender
+      )
+    );
 
-    const optionIndex = await askQuestion("> ");
+    const optionIndex = await askQuestion(colorText("[>] ", Colors.fg.cyan));
     const selectedOption = options[optionIndex - 1];
 
     if (optionIndex == options.length + 1) {

@@ -1,6 +1,26 @@
 import { Colors } from "./colors.mjs";
 import { colorText } from "./colors.mjs";
 
+export const indexToLabel = (index) => {
+  if (index < 0 || index > 702) {
+    throw new Error("Index out of bounds");
+  }
+
+  let label = "";
+  index += 1;
+
+  while (index > 0) {
+    let remainder = index % 26;
+    if (remainder === 0) {
+      remainder = 26;
+    }
+    label = String.fromCharCode(64 + remainder) + label;
+    index = (index - remainder) / 26;
+  }
+
+  return label;
+};
+
 export class Graph {
   constructor(size, orientation) {
     this.size = size;
@@ -38,12 +58,11 @@ export class Graph {
     this.matrix[nodeA][nodeB] = 0;
   }
 
-  //only for undirected nodes
   neighbourhood(node) {
     let connectedNodes = [];
     for (let i = 0; i < this.size; i++) {
       if (this.matrix[node][i] > 0) {
-        connectedNodes.push(String.fromCharCode(65 + i));
+        connectedNodes.push(indexToLabel(i));
       }
     }
 
@@ -62,26 +81,15 @@ export class Graph {
 
     for (let i = 0; i < this.size; i++) {
       if (this.matrix[node][i] > 0) {
-        // If there is a link from 'node' to 'i'
-        successors.push(String.fromCharCode(65 + i));
+        successors.push(indexToLabel(i));
       }
-    }
-
-    for (let i = 0; i < this.size; i++) {
       if (this.matrix[i][node] > 0) {
-        // If there is a link to 'node' from 'i'
-        predecessors.push(String.fromCharCode(65 + i));
+        predecessors.push(indexToLabel(i));
       }
     }
 
-    console.log(
-      `Predecessors of [${String.fromCharCode(65 + node)}]: `,
-      predecessors
-    );
-    console.log(
-      `Successors of [${String.fromCharCode(65 + node)}]: `,
-      successors
-    );
+    console.log(`Predecessors of [${indexToLabel(node)}]: `, predecessors);
+    console.log(`Successors of [${indexToLabel(node)}]: `, successors);
   }
 
   shuffle() {
@@ -92,41 +100,33 @@ export class Graph {
     }
   }
 
-  //display graph
-
   displayMatrixAsTable() {
-    console.log(`[${this.orientation === "D" ? "→" : "○"}]`);
-
-    let labeledMatrix = this.matrix.map((row) => {
+    let labeledMatrix = this.matrix.map((row, rowIndex) => {
       let rowObject = {};
       row.forEach((cell, cellIndex) => {
-        const letter = String.fromCharCode(65 + cellIndex);
-        rowObject[letter] = cell;
+        rowObject[indexToLabel(cellIndex)] = cell;
       });
       return rowObject;
     });
 
     let labeledRows = {};
     labeledMatrix.forEach((row, rowIndex) => {
-      const rowLetter = String.fromCharCode(65 + rowIndex);
-      labeledRows[rowLetter] = row;
+      labeledRows[indexToLabel(rowIndex)] = row;
     });
 
     console.table(labeledRows);
   }
 
   displayAdjacencyList() {
-    console.log(`[${this.orientation === "D" ? "→" : "○"}]`);
-
     for (let i = 0; i < this.size; i++) {
       let listRepresentation = colorText(
-        `[${String.fromCharCode(65 + i)}]`,
+        `[${indexToLabel(i)}]`,
         Colors.fg.green
       );
 
       for (let j = 0; j < this.size; j++) {
         if (this.matrix[i][j] > 0) {
-          listRepresentation += `→[${String.fromCharCode(65 + j)}]`;
+          listRepresentation += `→[${indexToLabel(j)}]`;
         }
       }
 
