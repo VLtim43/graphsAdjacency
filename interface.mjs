@@ -1,5 +1,5 @@
 import { createInterface } from "readline";
-import { Graph, indexToLabel } from "./graph.mjs";
+import { Graph, indexToLabel, letterToIndex } from "./graph.mjs";
 import { Colors } from "./colors.mjs";
 import { colorText } from "./colors.mjs";
 
@@ -7,14 +7,6 @@ const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-
-function letterToIndex(label) {
-  let index = 0;
-  for (let i = 0; i < label.length; i++) {
-    index = index * 26 + (label.charCodeAt(i) - "A".charCodeAt(0) + 1);
-  }
-  return index - 1;
-}
 
 async function getNodeInput(promptMessage, size) {
   let nodeLabel, nodeIndex;
@@ -24,10 +16,10 @@ async function getNodeInput(promptMessage, size) {
     if (nodeIndex < 0 || nodeIndex >= size) {
       console.log(
         colorText(
-          `Invalid input. Please enter a label between [A] and [${indexToLabel(
+          `Error: Invalid input. Please enter a label between [A] and [${indexToLabel(
             size - 1
           )}].`,
-          Colors.fg.red
+          Colors.bg.red
         )
       );
     }
@@ -54,7 +46,7 @@ function askQuestion(query) {
 }
 
 async function getNumberOfNodes() {
-  const maxValue = 702;
+  const maxValue = 15; //the max is 702 nodes. From [A] to [ZZ]. No guarantee to handle the table/list display inside a terminal window without breaking the layout
   let num;
   do {
     let input = await askQuestion(
@@ -114,36 +106,28 @@ async function manageGraphOptions(grafo) {
       description: "Create a link between two nodes",
       action: async () => {
         const nodeAIndex = await getNodeInput(
-          `➜ Enter the first Node:`,
+          colorText(`[➜] Enter the first Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
         const nodeBIndex = await getNodeInput(
-          `➜ Enter the second Node:`,
+          colorText(`[➜] Enter the second Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
         grafo.linkNodes(nodeAIndex, nodeBIndex);
-        console.log(
-          `[${indexToLabel(nodeAIndex)}]→[${indexToLabel(nodeBIndex)}] created`
-        );
       },
     },
     {
       description: "Delete a link between two nodes",
       action: async () => {
         const nodeAForDeletionIndex = await getNodeInput(
-          "➜ Enter the source node for deletion: ",
+          colorText(`[➜] Enter the first Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
         const nodeBForDeletionIndex = await getNodeInput(
-          "➜ Enter the target node for deletion: ",
+          colorText(`[➜] Enter the second Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
         grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
-        console.log(
-          `[${indexToLabel(nodeAForDeletionIndex)}]→[${indexToLabel(
-            nodeBForDeletionIndex
-          )}] deleted`
-        );
       },
     },
     {

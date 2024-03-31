@@ -21,6 +21,14 @@ export const indexToLabel = (index) => {
   return label;
 };
 
+export const letterToIndex = (label) => {
+  let index = 0;
+  for (let i = 0; i < label.length; i++) {
+    index = index * 26 + (label.charCodeAt(i) - "A".charCodeAt(0) + 1);
+  }
+  return index - 1;
+};
+
 export class Graph {
   constructor(size, orientation) {
     this.size = size;
@@ -48,14 +56,66 @@ export class Graph {
   }
 
   linkNodes(nodeA, nodeB, numberOfLinks = 1) {
+    if (nodeA < 0 || nodeA >= this.size || nodeB < 0 || nodeB >= this.size) {
+      console.log(
+        colorText(
+          "Error: One or both of the nodes do not exist.",
+          Colors.fg.red
+        )
+      );
+      return;
+    }
     this.matrix[nodeA][nodeB] = numberOfLinks;
     if (this.orientation === "U") {
       this.matrix[nodeB][nodeA] = numberOfLinks;
     }
+
+    console.log(
+      colorText(
+        `[${indexToLabel(nodeA)}]${
+          this.orientation === "U" ? "↔" : "→"
+        }[${indexToLabel(nodeB)}] created`,
+        Colors.fg.cyan
+      )
+    );
   }
 
   removeNode(nodeA, nodeB) {
+    if (nodeA < 0 || nodeA >= this.size || nodeB < 0 || nodeB >= this.size) {
+      console.log(
+        colorText(
+          "Error: One or both of the nodes do not exist.",
+          Colors.fg.red
+        )
+      );
+      return;
+    }
+
+    if (this.matrix[nodeA][nodeB] === 0) {
+      console.log(
+        colorText(
+          `No link between [${indexToLabel(nodeA)}] and [${indexToLabel(
+            nodeB
+          )}] found`,
+          Colors.fg.yellow
+        )
+      );
+      return;
+    }
     this.matrix[nodeA][nodeB] = 0;
+
+    if (this.orientation === "U") {
+      this.matrix[nodeB][nodeA] = 0;
+    }
+
+    console.log(
+      colorText(
+        `[${indexToLabel(nodeA)}]${
+          this.orientation === "U" ? "↔" : "→"
+        }[${indexToLabel(nodeB)}] deleted`,
+        Colors.fg.cyan
+      )
+    );
   }
 
   neighbourhood(node) {
