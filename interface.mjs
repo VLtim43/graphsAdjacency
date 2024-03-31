@@ -32,9 +32,9 @@ async function getNodeInput(promptMessage, size) {
   return nodeIndex;
 }
 
-console.log("┌───────────────────────────┐");
-console.log("│  Graph Console Interface  │");
-console.log("└───────────────────────────┘");
+console.log(colorText("╔═════════════════════════════╗", Colors.fg.lavender));
+console.log(colorText("║   Graph Console Interface   ║", Colors.fg.lavender));
+console.log(colorText("╚═════════════════════════════╝ ", Colors.fg.lavender));
 
 function askQuestion(query) {
   return new Promise((resolve) => {
@@ -42,6 +42,59 @@ function askQuestion(query) {
       resolve(answer);
     });
   });
+}
+
+async function getNumberOfNodes() {
+  const maxValue = 15;
+  let num;
+  do {
+    let input = await askQuestion(
+      colorText(
+        `[➜] Enter the number of nodes for the graph «1-${maxValue}»: `,
+        Colors.fg.lavender
+      )
+    );
+    num = parseInt(input, 10);
+
+    if (
+      !Number.isInteger(num) ||
+      num < 1 ||
+      num > maxValue ||
+      num.toString() !== input.trim()
+    ) {
+      console.log(
+        colorText(
+          "Error: Number is out of bounds or is not a valid number",
+          Colors.fg.white,
+          Colors.bg.red
+        )
+      );
+      num = undefined;
+    }
+  } while (num === undefined);
+  return num;
+}
+
+async function getGraphOrientation() {
+  let type;
+  do {
+    type = await askQuestion(
+      colorText(
+        "[➜] Choose the graph orientation «Directed[D]/Undirected[U]»: ",
+        Colors.fg.lavender
+      )
+    );
+    type = type.toUpperCase();
+    if (type !== "D" && type !== "U") {
+      console.log(colorText("Error: Invalid option", Colors.fg.red));
+    }
+  } while (type !== "D" && type !== "U");
+  console.log(
+    type === "D"
+      ? colorText("[Directed Graph →]", Colors.fg.beige)
+      : colorText("[Undirected Graph ○]", Colors.fg.beige)
+  );
+  return type;
 }
 
 async function manageGraphOptions(grafo) {
@@ -137,7 +190,7 @@ async function manageGraphOptions(grafo) {
   });
 
   do {
-    console.log("➜ Choose an option ↴");
+    console.log(colorText("[➜] Choose an option ↴", Colors.fg.pink));
 
     console.log("┌────────────────────────────────────────────────────────┐");
     options.forEach((option, index) =>
@@ -157,43 +210,6 @@ async function manageGraphOptions(grafo) {
       console.log(colorText("Error: Invalid option", Colors.fg.red));
     }
   } while (!exit);
-}
-6;
-
-async function getNumberOfNodes() {
-  const maxValue = 15;
-  let num;
-  do {
-    let input = await askQuestion(
-      colorText(
-        `➜ Enter the number of nodes for the graph (1-${maxValue}): `,
-        Colors.fg.white
-      )
-    );
-    num = parseInt(input, 10);
-
-    if (!Number.isInteger(num) || num < 1 || num > maxValue) {
-      console.log(
-        colorText(
-          "Error: Number is out of bounds or is not a valid number",
-          Colors.fg.red
-        )
-      );
-    }
-  } while (!Number.isInteger(num) || num < 1 || num > maxValue);
-  return num;
-}
-
-async function getGraphOrientation() {
-  let type;
-  do {
-    type = await askQuestion(
-      "➜ Choose the graph orientation - [Directed (D) or Undirected (U)]: "
-    );
-    type = type.toUpperCase();
-  } while (type !== "D" && type !== "U");
-  console.log(type === "D" ? "[Directed Graph →]" : "[Undirected Graph ○]");
-  return type;
 }
 
 async function main() {
