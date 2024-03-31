@@ -182,9 +182,13 @@ async function manageGraphOptions(grafo) {
     {
       description: "Check graph characteristics",
       action: async () => {
+        console.log(
+          colorText("[ Graph characteristics ] ↴", Colors.fg.lightLavender)
+        );
         grafo.checkSimpleGraph();
         grafo.checkRegularGraph();
-        grafo.checkComplete();
+        grafo.checkCompleteGraph();
+        grafo.checkBipartiteGraph();
       },
     },
   ];

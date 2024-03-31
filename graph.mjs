@@ -284,16 +284,16 @@ export class Graph {
     for (let i = 1; i < this.size; i++) {
       let currentDegree = this.matrix[i].reduce((acc, val) => acc + val, 0);
       if (currentDegree !== degree) {
-        console.log(colorText("[x] Graph is not regular.", Colors.fg.red));
+        console.log(colorText("[x] Graph is not regular", Colors.fg.red));
         return false;
       }
     }
 
-    console.log(colorText("[✓] Graph is regular.", Colors.fg.seaGreen));
+    console.log(colorText("[✓] Graph is regular", Colors.fg.seaGreen));
   }
 
   // complete = all nodes are connected, excluding loops
-  checkComplete() {
+  checkCompleteGraph() {
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         if (i === j) continue;
@@ -307,5 +307,38 @@ export class Graph {
 
     console.log(colorText("[✓] Graph is complete", Colors.fg.seaGreen));
     return true;
+  }
+
+  // bipartite = split in two sets
+  checkBipartiteGraph() {
+    let colors = Array(this.size).fill(-1);
+
+    let queue = [];
+    for (let start = 0; start < this.size; start++) {
+      if (colors[start] === -1) {
+        queue.push(start);
+        colors[start] = 0;
+
+        while (queue.length) {
+          let vertex = queue.shift();
+
+          for (let i = 0; i < this.size; i++) {
+            if (this.matrix[vertex][i] !== 0 && colors[i] === -1) {
+              colors[i] = 1 - colors[vertex];
+              queue.push(i);
+            } else if (
+              this.matrix[vertex][i] !== 0 &&
+              colors[i] === colors[vertex]
+            ) {
+              console.log(
+                colorText("[x] Graph is not bipartite", Colors.fg.red)
+              );
+            }
+          }
+        }
+      }
+    }
+
+    console.log(colorText("[✓] Graph is bipartite", Colors.fg.seaGreen));
   }
 }
