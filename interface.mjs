@@ -46,7 +46,7 @@ function askQuestion(query) {
 }
 
 async function getNumberOfNodes() {
-  const maxValue = 15; //the max is 702 nodes. From [A] to [ZZ]. No guarantee to handle the table/list display inside a terminal window without breaking the layout
+  const maxValue = 25; //the max is 702 nodes. From [A] to [ZZ]. No guarantee to handle the table/list display inside a terminal window without breaking the layout
   let num;
   do {
     let input = await askQuestion(
