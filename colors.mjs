@@ -8,30 +8,50 @@ export const Colors = {
   hidden: "\x1b[8m",
 
   fg: {
-    black: "\x1b[30m",
-    red: "\x1b[31m",
+    pink: "\x1b[31m",
     green: "\x1b[32m",
-    yellow: "\x1b[33m",
-    blue: "\x1b[34m",
-    magenta: "\x1b[35m",
+    orange: "\x1b[33m",
+    magenta: "\x1b[34m",
+    red: "\x1b[35m",
     cyan: "\x1b[36m",
     white: "\x1b[37m",
-    crimson: "\x1b[38m",
+
+    lavender: "\x1b[38;5;183m",
+    beige: "\x1b[38;5;230m",
   },
 
   bg: {
-    black: "\x1b[40m",
-    red: "\x1b[41m",
+    pink: "\x1b[41m",
     green: "\x1b[42m",
-    yellow: "\x1b[43m",
-    blue: "\x1b[44m",
-    magenta: "\x1b[45m",
+    orange: "\x1b[43m",
+    magenta: "\x1b[44m",
+    red: "\x1b[45m",
     cyan: "\x1b[46m",
     white: "\x1b[47m",
-    crimson: "\x1b[48m",
+
+    lavender: "\x1b[48;5;183m",
+    beige: "\x1b[48;5;230m",
   },
 };
 
 export const colorText = (text, colorCode) => {
   return `${colorCode}${text}${Colors.reset}`;
 };
+
+function logAllForegroundColors() {
+  const sampleText = "Sample Text";
+
+  Object.keys(Colors.bg).forEach((color) => {
+    const coloredText = colorText(sampleText, Colors.bg[color]);
+    console.log(coloredText + " " + color);
+  });
+
+  console.log("");
+
+  Object.keys(Colors.fg).forEach((color) => {
+    const coloredText = colorText(sampleText, Colors.fg[color]);
+    console.log(coloredText + " " + color);
+  });
+}
+
+logAllForegroundColors();
