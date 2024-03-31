@@ -258,29 +258,13 @@ export class Graph {
         return false;
       }
     }
-
-    // I did not implemented multigraphs idk
-    // for (let i = 0; i < this.size; i++) {
-    //   for (let j = 0; j < this.size; j++) {
-    //     if (this.matrix[i][j] !== 0 && this.matrix[i][j] !== 1) {
-    //       console.log(
-    //         colorText(
-    //           "Graph is not simple: found multiple edges",
-    //           Colors.fg.red
-    //         )
-    //       );
-    //       return false;
-    //     }
-    //   }
-    // }
-
     console.log(colorText("[✓] Graph is simple", Colors.fg.seaGreen));
+    return true;
   }
 
   // regular = all nodes have the same number of links
   checkRegularGraph() {
     let degree = this.matrix[0].reduce((acc, val) => acc + val, 0);
-
     for (let i = 1; i < this.size; i++) {
       let currentDegree = this.matrix[i].reduce((acc, val) => acc + val, 0);
       if (currentDegree !== degree) {
@@ -288,8 +272,8 @@ export class Graph {
         return false;
       }
     }
-
     console.log(colorText("[✓] Graph is regular", Colors.fg.seaGreen));
+    return true;
   }
 
   // complete = all nodes are connected, excluding loops
@@ -297,14 +281,12 @@ export class Graph {
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         if (i === j) continue;
-
         if (this.matrix[i][j] !== 1) {
           console.log(colorText("[x] Graph is not complete", Colors.fg.red));
           return false;
         }
       }
     }
-
     console.log(colorText("[✓] Graph is complete", Colors.fg.seaGreen));
     return true;
   }
@@ -312,16 +294,12 @@ export class Graph {
   // bipartite = split in two sets
   checkBipartiteGraph() {
     let colors = Array(this.size).fill(-1);
-
-    let queue = [];
     for (let start = 0; start < this.size; start++) {
       if (colors[start] === -1) {
-        queue.push(start);
+        let queue = [start];
         colors[start] = 0;
-
         while (queue.length) {
           let vertex = queue.shift();
-
           for (let i = 0; i < this.size; i++) {
             if (this.matrix[vertex][i] !== 0 && colors[i] === -1) {
               colors[i] = 1 - colors[vertex];
@@ -333,12 +311,13 @@ export class Graph {
               console.log(
                 colorText("[x] Graph is not bipartite", Colors.fg.red)
               );
+              return false;
             }
           }
         }
       }
     }
-
     console.log(colorText("[✓] Graph is bipartite", Colors.fg.seaGreen));
+    return true;
   }
 }
