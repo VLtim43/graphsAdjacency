@@ -220,10 +220,10 @@ async function manageGraphOptions(grafo) {
   }
 
   options.push({
-    description: "Shuffle the matrix (random nodes)",
+    description: "Shuffle the graph (random nodes)",
     action: () => {
       grafo.shuffle();
-      console.log(colorText("[Matrix shuffled] ↺", Colors.fg.darkMagenta));
+      console.log(colorText("[Graph shuffled] ↺", Colors.fg.darkMagenta));
     },
   });
 
