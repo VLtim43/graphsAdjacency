@@ -211,6 +211,22 @@ export class Graph {
     }
   }
 
+  breadthFirstSearch() {
+    console.log("Breadth-first search");
+  }
+
+  depthFirstSearch() {
+    console.log("Depth-First Search");
+  }
+
+  topologicSort() {
+    console.log("Topologic Sort");
+  }
+
+  kruskal() {
+    console.log("kruskal");
+  }
+
   displayMatrixAsTable() {
     let labeledMatrix = this.matrix.map((row, rowIndex) => {
       let rowObject = {};
@@ -319,5 +335,9 @@ export class Graph {
     }
     console.log(colorText("[✓] Graph is bipartite", Colors.fg.seaGreen));
     return true;
+  }
+
+  checkConnectedGraph() {
+    console.log("connected ");
   }
 }
