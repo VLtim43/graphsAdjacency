@@ -287,8 +287,38 @@ export class Graph {
     console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
   }
 
-  depthFirstSearch() {
-    console.log("Depth-First Search");
+  depthFirstSearch(node) {
+    if (node < 0 || node >= this.size) {
+      console.log(
+        colorText("Error: Starting node does not exist.", Colors.fg.red)
+      );
+      return;
+    }
+
+    let visited = Array(this.size).fill(false);
+    let path = [];
+
+    // Helper function for DFS
+    const dfs = (currentNode) => {
+      visited[currentNode] = true;
+      path.push(indexToLabel(currentNode));
+      console.log(
+        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
+      );
+
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
+          dfs(i);
+        }
+      }
+    };
+
+    dfs(node);
+
+    console.log(
+      colorText("DFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
+    );
+    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
   }
 
   topologicalSort() {

@@ -198,8 +198,13 @@ async function manageGraphOptions(grafo) {
 
     {
       description: "(DFS) Depth Search",
-      action: () => {
-        grafo.depthFirstSearch();
+      action: async () => {
+        const node = await getNodeInput(
+          colorText(`[➜] Enter the start Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+
+        grafo.depthFirstSearch(node);
       },
     },
 
