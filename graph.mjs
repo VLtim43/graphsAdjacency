@@ -118,6 +118,43 @@ export class Graph {
     );
   }
 
+  displayMatrixAsTable() {
+    let labeledMatrix = this.matrix.map((row, rowIndex) => {
+      let rowObject = {};
+      row.forEach((cell, cellIndex) => {
+        rowObject[indexToLabel(cellIndex)] = cell;
+      });
+      return rowObject;
+    });
+
+    let labeledRows = {};
+    labeledMatrix.forEach((row, rowIndex) => {
+      labeledRows[indexToLabel(rowIndex)] = row;
+    });
+
+    console.table(labeledRows);
+  }
+
+  displayAdjacencyList() {
+    for (let i = 0; i < this.size; i++) {
+      let listRepresentation = colorText(
+        `[${indexToLabel(i)}]`,
+        Colors.fg.seaGreen
+      );
+
+      for (let j = 0; j < this.size; j++) {
+        if (this.matrix[i][j] > 0) {
+          listRepresentation += colorText(
+            `→[${indexToLabel(j)}]`,
+            Colors.fg.beige
+          );
+        }
+      }
+
+      console.log(colorText("║ ", Colors.fg.cyan) + listRepresentation);
+    }
+  }
+
   neighbourhood(node) {
     let connectedNodes = [];
     for (let i = 0; i < this.size; i++) {
@@ -254,49 +291,68 @@ export class Graph {
     console.log("Depth-First Search");
   }
 
-  topologicSort() {
-    console.log("Topologic Sort");
+  topologicalSort() {
+    if (this.orientation !== "D") {
+      console.log(
+        colorText(
+          "Error: Topological sort is only applicable to directed graphs.",
+          Colors.fg.red
+        )
+      );
+      return;
+    }
+
+    let inDegree = Array(this.size).fill(0);
+    let queue = [];
+    let topoOrder = [];
+
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        if (this.matrix[j][i] > 0) {
+          inDegree[i]++;
+        }
+      }
+    }
+
+    for (let i = 0; i < this.size; i++) {
+      if (inDegree[i] === 0) {
+        queue.push(i);
+      }
+    }
+
+    while (queue.length > 0) {
+      let vertex = queue.shift();
+      topoOrder.push(indexToLabel(vertex));
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[vertex][i] > 0) {
+          inDegree[i]--;
+          if (inDegree[i] === 0) {
+            queue.push(i);
+          }
+        }
+      }
+    }
+
+    if (topoOrder.length !== this.size) {
+      console.log(
+        colorText(
+          "Error: Graph has cycles and cannot have a topological order.",
+          Colors.fg.red
+        )
+      );
+      return;
+    }
+
+    console.log(
+      colorText(
+        "Topological Order: " + topoOrder.join(", "),
+        Colors.fg.seaGreen
+      )
+    );
   }
 
   kruskal() {
     console.log("kruskal");
-  }
-
-  displayMatrixAsTable() {
-    let labeledMatrix = this.matrix.map((row, rowIndex) => {
-      let rowObject = {};
-      row.forEach((cell, cellIndex) => {
-        rowObject[indexToLabel(cellIndex)] = cell;
-      });
-      return rowObject;
-    });
-
-    let labeledRows = {};
-    labeledMatrix.forEach((row, rowIndex) => {
-      labeledRows[indexToLabel(rowIndex)] = row;
-    });
-
-    console.table(labeledRows);
-  }
-
-  displayAdjacencyList() {
-    for (let i = 0; i < this.size; i++) {
-      let listRepresentation = colorText(
-        `[${indexToLabel(i)}]`,
-        Colors.fg.seaGreen
-      );
-
-      for (let j = 0; j < this.size; j++) {
-        if (this.matrix[i][j] > 0) {
-          listRepresentation += colorText(
-            `→[${indexToLabel(j)}]`,
-            Colors.fg.beige
-          );
-        }
-      }
-
-      console.log(colorText("║ ", Colors.fg.cyan) + listRepresentation);
-    }
   }
 
   // simple = no loops & multi edges

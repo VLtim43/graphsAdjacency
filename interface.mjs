@@ -206,7 +206,7 @@ async function manageGraphOptions(grafo) {
     {
       description: "Topologic Sort",
       action: () => {
-        grafo.topologicSort();
+        grafo.topologicalSort();
       },
     },
 
