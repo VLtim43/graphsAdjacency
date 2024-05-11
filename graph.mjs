@@ -155,6 +155,79 @@ export class Graph {
     }
   }
 
+  breadthFirstSearch(node) {
+    if (node < 0 || node >= this.size) {
+      console.log(
+        colorText("Error: Starting node does not exist.", Colors.fg.red)
+      );
+      return;
+    }
+
+    let queue = [];
+    let visited = Array(this.size).fill(false);
+    let path = [];
+
+    queue.push(node);
+    visited[node] = true;
+
+    while (queue.length > 0) {
+      let currentNode = queue.shift();
+      path.push(indexToLabel(currentNode));
+      console.log(
+        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
+      );
+
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
+          visited[i] = true;
+          queue.push(i);
+          console.log(
+            colorText(`Enqueue [${indexToLabel(i)}]`, Colors.fg.cyan)
+          );
+        }
+      }
+    }
+
+    console.log(
+      colorText("BFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
+    );
+    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
+  }
+
+  depthFirstSearch(node) {
+    if (node < 0 || node >= this.size) {
+      console.log(
+        colorText("Error: Starting node does not exist.", Colors.fg.red)
+      );
+      return;
+    }
+
+    let visited = Array(this.size).fill(false);
+    let path = [];
+
+    // Helper function for DFS
+    const dfs = (currentNode) => {
+      visited[currentNode] = true;
+      path.push(indexToLabel(currentNode));
+      console.log(
+        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
+      );
+
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
+          dfs(i);
+        }
+      }
+    };
+
+    dfs(node);
+
+    console.log(
+      colorText("DFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
+    );
+    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
+  }
+
   neighbourhood(node) {
     let connectedNodes = [];
     for (let i = 0; i < this.size; i++) {
@@ -246,79 +319,6 @@ export class Graph {
         this.matrix[i][j] = Math.round(Math.random());
       }
     }
-  }
-
-  breadthFirstSearch(node) {
-    if (node < 0 || node >= this.size) {
-      console.log(
-        colorText("Error: Starting node does not exist.", Colors.fg.red)
-      );
-      return;
-    }
-
-    let queue = [];
-    let visited = Array(this.size).fill(false);
-    let path = [];
-
-    queue.push(node);
-    visited[node] = true;
-
-    while (queue.length > 0) {
-      let currentNode = queue.shift();
-      path.push(indexToLabel(currentNode));
-      console.log(
-        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
-      );
-
-      for (let i = 0; i < this.size; i++) {
-        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
-          visited[i] = true;
-          queue.push(i);
-          console.log(
-            colorText(`Enqueue [${indexToLabel(i)}]`, Colors.fg.cyan)
-          );
-        }
-      }
-    }
-
-    console.log(
-      colorText("BFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
-    );
-    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
-  }
-
-  depthFirstSearch(node) {
-    if (node < 0 || node >= this.size) {
-      console.log(
-        colorText("Error: Starting node does not exist.", Colors.fg.red)
-      );
-      return;
-    }
-
-    let visited = Array(this.size).fill(false);
-    let path = [];
-
-    // Helper function for DFS
-    const dfs = (currentNode) => {
-      visited[currentNode] = true;
-      path.push(indexToLabel(currentNode));
-      console.log(
-        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
-      );
-
-      for (let i = 0; i < this.size; i++) {
-        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
-          dfs(i);
-        }
-      }
-    };
-
-    dfs(node);
-
-    console.log(
-      colorText("DFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
-    );
-    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
   }
 
   topologicalSort() {
@@ -459,6 +459,38 @@ export class Graph {
   }
 
   checkConnectedGraph() {
-    console.log("connected ");
+    if (this.size === 0) {
+      console.log(
+        colorText(
+          "[✓] Graph is connected (trivially, as it is empty)",
+          Colors.fg.seaGreen
+        )
+      );
+      return true;
+    }
+
+    let visited = Array(this.size).fill(false);
+    let queue = [0];
+    visited[0] = true;
+    let count = 1;
+
+    while (queue.length > 0) {
+      let node = queue.shift();
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[node][i] !== 0 && !visited[i]) {
+          visited[i] = true;
+          queue.push(i);
+          count++;
+        }
+      }
+    }
+
+    if (count === this.size) {
+      console.log(colorText("[✓] Graph is connected", Colors.fg.seaGreen));
+      return true;
+    } else {
+      console.log(colorText("[x] Graph is not connected", Colors.fg.red));
+      return false;
+    }
   }
 }
