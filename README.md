@@ -7,3 +7,5 @@ run
 ```
 node interface.mjs
 ```
+
+The part 2 can be found on the second branch
