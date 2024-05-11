@@ -116,6 +116,7 @@ async function manageGraphOptions(grafo) {
         grafo.linkNodes(nodeAIndex, nodeBIndex);
       },
     },
+
     {
       description: "Delete a link between two nodes",
       action: async () => {
@@ -130,6 +131,22 @@ async function manageGraphOptions(grafo) {
         grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
       },
     },
+
+    {
+      description: "Shortest Path between two nodes",
+      action: async () => {
+        const nodeAForDeletionIndex = await getNodeInput(
+          colorText(`[➜] Enter the first Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+        const nodeBForDeletionIndex = await getNodeInput(
+          colorText(`[➜] Enter the second Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+        grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
+      },
+    },
+
     {
       description: "Display as Matrix",
       action: () => {
@@ -168,6 +185,44 @@ async function manageGraphOptions(grafo) {
     },
 
     {
+      description: "(BFS) Breadth Search",
+      action: async () => {
+        const node = await getNodeInput(
+          colorText(`[➜] Enter the start Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+
+        grafo.breadthFirstSearch(node);
+      },
+    },
+
+    {
+      description: "(DFS) Depth Search",
+      action: async () => {
+        const node = await getNodeInput(
+          colorText(`[➜] Enter the start Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+
+        grafo.depthFirstSearch(node);
+      },
+    },
+
+    {
+      description: "Topologic Sort",
+      action: () => {
+        grafo.topologicalSort();
+      },
+    },
+
+    {
+      description: "Minimum spanning tree(Kruskal)",
+      action: () => {
+        grafo.kruskal();
+      },
+    },
+
+    {
       description: "Identify the degree of a Node",
       action: async () => {
         const node = await getNodeInput(
@@ -189,6 +244,7 @@ async function manageGraphOptions(grafo) {
         grafo.checkRegularGraph();
         grafo.checkCompleteGraph();
         grafo.checkBipartiteGraph();
+        grafo.checkConnectedGraph();
       },
     },
   ];

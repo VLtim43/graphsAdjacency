@@ -118,6 +118,116 @@ export class Graph {
     );
   }
 
+  displayMatrixAsTable() {
+    let labeledMatrix = this.matrix.map((row, rowIndex) => {
+      let rowObject = {};
+      row.forEach((cell, cellIndex) => {
+        rowObject[indexToLabel(cellIndex)] = cell;
+      });
+      return rowObject;
+    });
+
+    let labeledRows = {};
+    labeledMatrix.forEach((row, rowIndex) => {
+      labeledRows[indexToLabel(rowIndex)] = row;
+    });
+
+    console.table(labeledRows);
+  }
+
+  displayAdjacencyList() {
+    for (let i = 0; i < this.size; i++) {
+      let listRepresentation = colorText(
+        `[${indexToLabel(i)}]`,
+        Colors.fg.seaGreen
+      );
+
+      for (let j = 0; j < this.size; j++) {
+        if (this.matrix[i][j] > 0) {
+          listRepresentation += colorText(
+            `→[${indexToLabel(j)}]`,
+            Colors.fg.beige
+          );
+        }
+      }
+
+      console.log(colorText("║ ", Colors.fg.cyan) + listRepresentation);
+    }
+  }
+
+  breadthFirstSearch(node) {
+    if (node < 0 || node >= this.size) {
+      console.log(
+        colorText("Error: Starting node does not exist.", Colors.fg.red)
+      );
+      return;
+    }
+
+    let queue = [];
+    let visited = Array(this.size).fill(false);
+    let path = [];
+
+    queue.push(node);
+    visited[node] = true;
+
+    while (queue.length > 0) {
+      let currentNode = queue.shift();
+      path.push(indexToLabel(currentNode));
+      console.log(
+        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
+      );
+
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
+          visited[i] = true;
+          queue.push(i);
+          console.log(
+            colorText(`Enqueue [${indexToLabel(i)}]`, Colors.fg.cyan)
+          );
+        }
+      }
+    }
+
+    console.log(
+      colorText("BFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
+    );
+    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
+  }
+
+  depthFirstSearch(node) {
+    if (node < 0 || node >= this.size) {
+      console.log(
+        colorText("Error: Starting node does not exist.", Colors.fg.red)
+      );
+      return;
+    }
+
+    let visited = Array(this.size).fill(false);
+    let path = [];
+
+    // Helper function for DFS
+    const dfs = (currentNode) => {
+      visited[currentNode] = true;
+      path.push(indexToLabel(currentNode));
+      console.log(
+        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
+      );
+
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
+          dfs(i);
+        }
+      }
+    };
+
+    dfs(node);
+
+    console.log(
+      colorText("DFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
+    );
+    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
+  }
+
   neighbourhood(node) {
     let connectedNodes = [];
     for (let i = 0; i < this.size; i++) {
@@ -211,41 +321,68 @@ export class Graph {
     }
   }
 
-  displayMatrixAsTable() {
-    let labeledMatrix = this.matrix.map((row, rowIndex) => {
-      let rowObject = {};
-      row.forEach((cell, cellIndex) => {
-        rowObject[indexToLabel(cellIndex)] = cell;
-      });
-      return rowObject;
-    });
-
-    let labeledRows = {};
-    labeledMatrix.forEach((row, rowIndex) => {
-      labeledRows[indexToLabel(rowIndex)] = row;
-    });
-
-    console.table(labeledRows);
-  }
-
-  displayAdjacencyList() {
-    for (let i = 0; i < this.size; i++) {
-      let listRepresentation = colorText(
-        `[${indexToLabel(i)}]`,
-        Colors.fg.seaGreen
+  topologicalSort() {
+    if (this.orientation !== "D") {
+      console.log(
+        colorText(
+          "Error: Topological sort is only applicable to directed graphs.",
+          Colors.fg.red
+        )
       );
+      return;
+    }
 
+    let inDegree = Array(this.size).fill(0);
+    let queue = [];
+    let topoOrder = [];
+
+    for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
-        if (this.matrix[i][j] > 0) {
-          listRepresentation += colorText(
-            `→[${indexToLabel(j)}]`,
-            Colors.fg.beige
-          );
+        if (this.matrix[j][i] > 0) {
+          inDegree[i]++;
         }
       }
-
-      console.log(colorText("║ ", Colors.fg.cyan) + listRepresentation);
     }
+
+    for (let i = 0; i < this.size; i++) {
+      if (inDegree[i] === 0) {
+        queue.push(i);
+      }
+    }
+
+    while (queue.length > 0) {
+      let vertex = queue.shift();
+      topoOrder.push(indexToLabel(vertex));
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[vertex][i] > 0) {
+          inDegree[i]--;
+          if (inDegree[i] === 0) {
+            queue.push(i);
+          }
+        }
+      }
+    }
+
+    if (topoOrder.length !== this.size) {
+      console.log(
+        colorText(
+          "Error: Graph has cycles and cannot have a topological order.",
+          Colors.fg.red
+        )
+      );
+      return;
+    }
+
+    console.log(
+      colorText(
+        "Topological Order: " + topoOrder.join(", "),
+        Colors.fg.seaGreen
+      )
+    );
+  }
+
+  kruskal() {
+    console.log("kruskal");
   }
 
   // simple = no loops & multi edges
@@ -319,5 +456,41 @@ export class Graph {
     }
     console.log(colorText("[✓] Graph is bipartite", Colors.fg.seaGreen));
     return true;
+  }
+
+  checkConnectedGraph() {
+    if (this.size === 0) {
+      console.log(
+        colorText(
+          "[✓] Graph is connected (trivially, as it is empty)",
+          Colors.fg.seaGreen
+        )
+      );
+      return true;
+    }
+
+    let visited = Array(this.size).fill(false);
+    let queue = [0];
+    visited[0] = true;
+    let count = 1;
+
+    while (queue.length > 0) {
+      let node = queue.shift();
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[node][i] !== 0 && !visited[i]) {
+          visited[i] = true;
+          queue.push(i);
+          count++;
+        }
+      }
+    }
+
+    if (count === this.size) {
+      console.log(colorText("[✓] Graph is connected", Colors.fg.seaGreen));
+      return true;
+    } else {
+      console.log(colorText("[x] Graph is not connected", Colors.fg.red));
+      return false;
+    }
   }
 }
