@@ -186,8 +186,13 @@ async function manageGraphOptions(grafo) {
 
     {
       description: "(BFS) Breadth Search",
-      action: () => {
-        grafo.breadthFirstSearch();
+      action: async () => {
+        const node = await getNodeInput(
+          colorText(`[➜] Enter the start Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+
+        grafo.breadthFirstSearch(node);
       },
     },
 

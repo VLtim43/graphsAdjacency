@@ -211,8 +211,43 @@ export class Graph {
     }
   }
 
-  breadthFirstSearch() {
-    console.log("Breadth-first search");
+  breadthFirstSearch(node) {
+    if (node < 0 || node >= this.size) {
+      console.log(
+        colorText("Error: Starting node does not exist.", Colors.fg.red)
+      );
+      return;
+    }
+
+    let queue = [];
+    let visited = Array(this.size).fill(false);
+    let path = [];
+
+    queue.push(node);
+    visited[node] = true;
+
+    while (queue.length > 0) {
+      let currentNode = queue.shift();
+      path.push(indexToLabel(currentNode));
+      console.log(
+        colorText(`Visiting [${indexToLabel(currentNode)}]`, Colors.fg.seaGreen)
+      );
+
+      for (let i = 0; i < this.size; i++) {
+        if (this.matrix[currentNode][i] !== 0 && !visited[i]) {
+          visited[i] = true;
+          queue.push(i);
+          console.log(
+            colorText(`Enqueue [${indexToLabel(i)}]`, Colors.fg.cyan)
+          );
+        }
+      }
+    }
+
+    console.log(
+      colorText("BFS Complete. Visited nodes in order:", Colors.fg.goldOrange)
+    );
+    console.log(colorText(path.join(" → "), Colors.fg.seaGreen));
   }
 
   depthFirstSearch() {
