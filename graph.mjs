@@ -118,6 +118,48 @@ export class Graph {
     );
   }
 
+  setLinkWeight(nodeA, nodeB, weight) {
+    if (nodeA < 0 || nodeA >= this.size || nodeB < 0 || nodeB >= this.size) {
+      console.log(
+        colorText(
+          "Error: One or both of the nodes do not exist.",
+          Colors.fg.red
+        )
+      );
+      return;
+    }
+    if (weight < 1 || weight > 100) {
+      console.log(
+        colorText("Error: Weight must be between 1 and 100.", Colors.fg.red)
+      );
+      return;
+    }
+    if (this.matrix[nodeA][nodeB] === 0) {
+      console.log(
+        colorText(
+          `No link between [${indexToLabel(nodeA)}] and [${indexToLabel(
+            nodeB
+          )}] found to set weight.`,
+          Colors.fg.goldOrange
+        )
+      );
+      return;
+    }
+    this.matrix[nodeA][nodeB] = weight;
+    if (this.orientation === "U") {
+      this.matrix[nodeB][nodeA] = weight;
+    }
+
+    console.log(
+      colorText(
+        `Weight for link [${indexToLabel(nodeA)}]${
+          this.orientation === "U" ? "↔" : "→"
+        }[${indexToLabel(nodeB)}] set to ${weight}`,
+        Colors.fg.seaGreen
+      )
+    );
+  }
+
   displayMatrixAsTable() {
     let labeledMatrix = this.matrix.map((row, rowIndex) => {
       let rowObject = {};

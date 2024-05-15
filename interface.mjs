@@ -133,6 +133,44 @@ async function manageGraphOptions(grafo) {
     },
 
     {
+      description: "Add Weight between 2 nodes",
+      action: async () => {
+        const nodeA = await getNodeInput(
+          colorText(`[➜] Enter the first Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+        const nodeB = await getNodeInput(
+          colorText(`[➜] Enter the second Node: `, Colors.fg.lightLavender),
+          grafo.getSize()
+        );
+
+        let weight;
+        while (true) {
+          const weightInput = await askQuestion(
+            colorText(`[➜] Enter the weight (1-100): `, Colors.fg.lightLavender)
+          );
+          weight = parseInt(weightInput, 10);
+          if (!Number.isInteger(weight)) {
+            console.log(
+              colorText("Error: Weight must be an integer.", Colors.fg.red)
+            );
+          } else if (weight < 1 || weight > 100) {
+            console.log(
+              colorText(
+                "Error: Weight must be between 1 and 100.",
+                Colors.fg.red
+              )
+            );
+          } else {
+            break;
+          }
+        }
+
+        grafo.setLinkWeight(nodeA, nodeB, weight);
+      },
+    },
+
+    {
       description: "Shortest Path between two nodes",
       action: async () => {
         const nodeAForDeletionIndex = await getNodeInput(
