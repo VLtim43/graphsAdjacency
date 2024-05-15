@@ -1,6 +1,8 @@
 import { Colors } from "./colors.mjs";
 import { colorText } from "./colors.mjs";
 
+const MAX_WEIGHT = 15;
+
 export const indexToLabel = (index) => {
   if (index < 0 || index > 702) {
     throw new Error("Index out of bounds");
@@ -128,9 +130,12 @@ export class Graph {
       );
       return;
     }
-    if (weight < 1 || weight > 100) {
+    if (weight < 1 || weight > MAX_WEIGHT) {
       console.log(
-        colorText("Error: Weight must be between 1 and 100.", Colors.fg.red)
+        colorText(
+          `Error: Weight must be between 1 and ${MAX_WEIGHT}.`,
+          Colors.fg.red
+        )
       );
       return;
     }
@@ -188,7 +193,7 @@ export class Graph {
         if (this.matrix[i][j] > 0) {
           if (this.matrix[i][j] > 1) {
             listRepresentation += colorText(
-              `-{${this.matrix[i][j]}}->[${indexToLabel(j)}]`,
+              `-${this.matrix[i][j]}->[${indexToLabel(j)}]`,
               Colors.fg.beige
             );
           } else {
@@ -363,9 +368,27 @@ export class Graph {
   }
 
   shuffle() {
+    const linkProbability = 0.3;
+    const highWeightProbability = 0.5;
+
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
-        this.matrix[i][j] = Math.round(Math.random());
+        if (Math.random() < linkProbability) {
+          if (Math.random() < highWeightProbability) {
+            const weight = Math.floor(Math.random() * (MAX_WEIGHT - 1)) + 2;
+            this.matrix[i][j] = weight;
+            if (this.orientation === "U") {
+              this.matrix[j][i] = weight;
+            }
+          } else {
+            this.matrix[i][j] = 1;
+            if (this.orientation === "U") {
+              this.matrix[j][i] = 1;
+            }
+          }
+        } else {
+          this.matrix[i][j] = 0;
+        }
       }
     }
   }
