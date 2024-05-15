@@ -513,6 +513,72 @@ export class Graph {
 
     return mst;
   }
+
+  findShortestPath(nodeA, nodeB) {
+    if (nodeA < 0 || nodeA >= this.size || nodeB < 0 || nodeB >= this.size) {
+      console.log("Error: One or both of the nodes do not exist.");
+      return;
+    }
+
+    const distances = Array(this.size).fill(Infinity);
+    const previous = Array(this.size).fill(null);
+    const visited = new Set();
+
+    distances[nodeA] = 0;
+
+    const getSmallestDistanceNode = () => {
+      let smallest = null;
+      let smallestDistance = Infinity;
+      for (let i = 0; i < this.size; i++) {
+        if (!visited.has(i) && distances[i] < smallestDistance) {
+          smallest = i;
+          smallestDistance = distances[i];
+        }
+      }
+      return smallest;
+    };
+
+    while (visited.size !== this.size) {
+      const currentNode = getSmallestDistanceNode();
+      if (currentNode === null) break;
+      visited.add(currentNode);
+
+      for (let neighbor = 0; neighbor < this.size; neighbor++) {
+        if (this.matrix[currentNode][neighbor] > 0 && !visited.has(neighbor)) {
+          const newDist =
+            distances[currentNode] + this.matrix[currentNode][neighbor];
+          if (newDist < distances[neighbor]) {
+            distances[neighbor] = newDist;
+            previous[neighbor] = currentNode;
+          }
+        }
+      }
+    }
+
+    if (distances[nodeB] === Infinity) {
+      console.log(
+        `No path found between [${indexToLabel(nodeA)}] and [${indexToLabel(
+          nodeB
+        )}]`
+      );
+      return;
+    }
+
+    let path = [];
+    for (let at = nodeB; at !== null; at = previous[at]) {
+      path.push(at);
+    }
+    path.reverse();
+
+    const labeledPath = path.map((node) => indexToLabel(node)).join(" -> ");
+
+    console.log(
+      `Shortest path between [${indexToLabel(nodeA)}] and [${indexToLabel(
+        nodeB
+      )}]: ${labeledPath} with distance ${distances[nodeB]}`
+    );
+  }
+
   // simple = no loops & multi edges
   checkSimpleGraph() {
     for (let i = 0; i < this.size; i++) {

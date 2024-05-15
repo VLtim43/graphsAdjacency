@@ -173,15 +173,16 @@ async function manageGraphOptions(grafo) {
     {
       description: "Shortest Path between two nodes",
       action: async () => {
-        const nodeAForDeletionIndex = await getNodeInput(
+        const nodeA = await getNodeInput(
           colorText(`[➜] Enter the first Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
-        const nodeBForDeletionIndex = await getNodeInput(
+        const nodeB = await getNodeInput(
           colorText(`[➜] Enter the second Node: `, Colors.fg.lightLavender),
           grafo.getSize()
         );
-        grafo.removeNode(nodeAForDeletionIndex, nodeBForDeletionIndex);
+
+        grafo.findShortestPath(nodeA, nodeB);
       },
     },
 
