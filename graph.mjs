@@ -186,10 +186,17 @@ export class Graph {
 
       for (let j = 0; j < this.size; j++) {
         if (this.matrix[i][j] > 0) {
-          listRepresentation += colorText(
-            `→[${indexToLabel(j)}]`,
-            Colors.fg.beige
-          );
+          if (this.matrix[i][j] > 1) {
+            listRepresentation += colorText(
+              `-{${this.matrix[i][j]}}->[${indexToLabel(j)}]`,
+              Colors.fg.beige
+            );
+          } else {
+            listRepresentation += colorText(
+              `→[${indexToLabel(j)}]`,
+              Colors.fg.beige
+            );
+          }
         }
       }
 

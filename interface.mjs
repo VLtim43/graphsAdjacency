@@ -133,7 +133,7 @@ async function manageGraphOptions(grafo) {
     },
 
     {
-      description: "Add Weight between 2 nodes",
+      description: "Add Weight between two nodes",
       action: async () => {
         const nodeA = await getNodeInput(
           colorText(`[➜] Enter the first Node: `, Colors.fg.lightLavender),
