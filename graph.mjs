@@ -454,9 +454,65 @@ export class Graph {
   }
 
   kruskal() {
-    console.log("kruskal");
-  }
+    let edges = [];
+    for (let i = 0; i < this.size; i++) {
+      for (let j = i + 1; j < this.size; j++) {
+        if (this.matrix[i][j] > 0) {
+          edges.push({ u: i, v: j, weight: this.matrix[i][j] });
+        }
+      }
+    }
 
+    edges.sort((a, b) => a.weight - b.weight);
+
+    let parent = [];
+    let rank = [];
+
+    const find = (node) => {
+      if (parent[node] !== node) {
+        parent[node] = find(parent[node]);
+      }
+      return parent[node];
+    };
+
+    const union = (node1, node2) => {
+      let root1 = find(node1);
+      let root2 = find(node2);
+
+      if (root1 !== root2) {
+        if (rank[root1] > rank[root2]) {
+          parent[root2] = root1;
+        } else if (rank[root1] < rank[root2]) {
+          parent[root1] = root2;
+        } else {
+          parent[root2] = root1;
+          rank[root1]++;
+        }
+      }
+    };
+
+    for (let i = 0; i < this.size; i++) {
+      parent[i] = i;
+      rank[i] = 0;
+    }
+
+    let mst = [];
+    for (let edge of edges) {
+      if (find(edge.u) !== find(edge.v)) {
+        union(edge.u, edge.v);
+        mst.push(edge);
+      }
+    }
+
+    console.log("Minimum Spanning Tree:");
+    mst.forEach((edge) => {
+      console.log(
+        `[${indexToLabel(edge.u)}]-[${indexToLabel(edge.v)}]:${edge.weight}`
+      );
+    });
+
+    return mst;
+  }
   // simple = no loops & multi edges
   checkSimpleGraph() {
     for (let i = 0; i < this.size; i++) {
