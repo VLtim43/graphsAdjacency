@@ -6,8 +6,8 @@ const c = 2; // Max number of days a doctor can work
 
 // Doctors days
 const doctors = [
-  { name: "Doctor A", availableDays: [1, 2, 3] },
-  { name: "Doctor B", availableDays: [2, 3, 4] },
+  { name: "Doctor A", availableDays: [1, 2] },
+  { name: "Doctor B", availableDays: [2, 3] },
 ];
 
 console.log(colorText("\nDoctors' Available Days:", Colors.fg.lightLavender));
@@ -44,7 +44,6 @@ console.log(
   )
 );
 
-// In this example:
 // Create a graph with 10 nodes
 // 0: Source (S), 1: Doctor A, 2: Doctor B, 3: Period 1 (P1), 4: Period 2 (P2), 5: Day 1, 6: Day 2, 7: Day 3, 8: Day 4, 9: Sink (T)
 const graph = new Graph(10, "D");
@@ -55,9 +54,9 @@ graph.linkNodes(0, 2, c); // S -> B
 
 // Doctors to intermediate period nodes
 graph.linkNodes(1, 3, 1); // A -> P1 (day 1 or 2)
-graph.linkNodes(1, 4, 1); // A -> P2 (day 3)
+graph.linkNodes(1, 4, 1); // A -> P2 (day 3 or 4)
 graph.linkNodes(2, 3, 1); // B -> P1 (day 2)
-graph.linkNodes(2, 4, 1); // B -> P2 (day 3 or 4)
+graph.linkNodes(2, 4, 1); // B -> P2 (day 3)
 
 // Intermediate period nodes to vacation days
 graph.linkNodes(3, 5, 1); // P1 -> Day 1
@@ -80,4 +79,19 @@ const source = 0; // Node S
 const sink = 9; // Node T
 
 // Calculate the maximum flow
-graph.fordFulkersonMaxFlow(source, sink);
+const maxFlow = graph.fordFulkersonMaxFlow(source, sink);
+
+const totalVacationDays = periods.reduce(
+  (sum, period) => sum + period.days.length,
+  0
+);
+
+if (maxFlow === totalVacationDays) {
+  console.log(
+    colorText("It is possible to cover all vacation days.", Colors.fg.seaGreen)
+  );
+} else {
+  console.log(
+    colorText("It is not possible to cover all vacation days.", Colors.fg.red)
+  );
+}

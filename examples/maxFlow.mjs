@@ -5,7 +5,6 @@ import { colorText } from "../colors.mjs";
 // Create a graph with 6 nodes
 const graph = new Graph(6, "D");
 
-// Add edges with weights using letterToIndex to convert letters to indices
 graph.linkNodes(0, 1, 7);
 graph.linkNodes(0, 4, 4);
 graph.linkNodes(1, 2, 5);
