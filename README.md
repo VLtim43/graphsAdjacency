@@ -12,7 +12,7 @@ for the full set of instructions (First activity)
 
 Activty 2:
 
-You are helping the medical consulting firm "Doctors Without Weekends" organize doctors' work schedules at a large hospital. Most of the regular daily schedules are already set. Now, you need to deal with the special cases: ensure that there is at least one doctor on duty on each day of special periods, such as holidays (e.g. Christmas, 4th of July, Thanksgiving).
+"You are helping the medical consulting firm "Doctors Without Weekends" organize doctors' work schedules at a large hospital. Most of the regular daily schedules are already set. Now, you need to deal with the special cases: ensure that there is at least one doctor on duty on each day of special periods, such as holidays (e.g. Christmas, 4th of July, Thanksgiving).
 
 There are k vacation periods, each covering several consecutive days. Let Dj be the set of days in the j-th vacation period. The union of all these days, ⋃jDj, forms the set of all vacation days.
 
@@ -23,28 +23,20 @@ An efficient algorithm must be developed to determine whether it is possible to 
 Each doctor can be assigned to work a maximum of c vacation days in total, where c is a given parameter.
 For each vacation period j, each doctor can be assigned to work on a maximum of one of the days in the Dj set
 
-The algorithm must return an assignment of doctors that satisfies these constraints or indicate that such an assignment is not possible.
+The algorithm must return an assignment of doctors that satisfies these constraints or indicate that such an assignment is not possible"
+
+
+I did a flow graph, with intermediary nodes for the periods. So we have the Source that connects to all doctors with C weight. then each doctor connects to a Period that contains a day he is available. Finally the Days all connect to the sink.
+If I can have a max flow = c then it's possible to arrange the doctors.
+
 
 run
 
 ```
-node interfaceAtiv2.mjs
+node doctorsWithoutWeekends.mjs
 ```
-
-for the reduced set os instructions (Second activity)
-
-Also run
-
+To an working example. and run
 ```
-node examples/doctorsWithoutWeekends.mjs
+node doctorsWithoutWeekendsFail.mjs
 ```
-
-To a possible outcome of the exercise
-
-or
-
-```
-node examples/doctorsWithoutWeekendsFail.mjs
-```
-
-To a failed outcome of the exercise
+To a failed one
