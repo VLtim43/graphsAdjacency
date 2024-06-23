@@ -57,7 +57,7 @@ export class Graph {
     return matrix;
   }
 
-  linkNodes(nodeA, nodeB, numberOfLinks = 1) {
+  linkNodes(nodeA, nodeB, weight = 1) {
     if (nodeA < 0 || nodeA >= this.size || nodeB < 0 || nodeB >= this.size) {
       console.log(
         colorText(
@@ -67,16 +67,16 @@ export class Graph {
       );
       return;
     }
-    this.matrix[nodeA][nodeB] = numberOfLinks;
+    this.matrix[nodeA][nodeB] = weight;
     if (this.orientation === "U") {
-      this.matrix[nodeB][nodeA] = numberOfLinks;
+      this.matrix[nodeB][nodeA] = weight;
     }
 
     console.log(
       colorText(
         `[${indexToLabel(nodeA)}]${
           this.orientation === "U" ? "↔" : "→"
-        }[${indexToLabel(nodeB)}] created`,
+        }[${indexToLabel(nodeB)}] created with weight ${weight}`,
         Colors.fg.seaGreen
       )
     );
