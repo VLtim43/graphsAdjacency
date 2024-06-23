@@ -1,5 +1,5 @@
-import { Colors } from "../colors.mjs";
-import { colorText } from "../colors.mjs";
+import { Colors } from "./colors.mjs";
+import { colorText } from "./colors.mjs";
 
 const MAX_WEIGHT = 15;
 
@@ -686,5 +686,73 @@ export class Graph {
       console.log(colorText("[x] Graph is not connected", Colors.fg.red));
       return false;
     }
+  }
+
+  // --------------------------------- Ativ 2 -------------------------------------------------------
+
+  fordFulkersonMaxFlow(source, sink) {
+    let residualGraph = this.#initiateMatrix(this.size);
+
+    // Initialize residual graph as the original graph
+    for (let u = 0; u < this.size; u++) {
+      for (let v = 0; v < this.size; v++) {
+        residualGraph[u][v] = this.matrix[u][v];
+      }
+    }
+
+    let parent = Array(this.size).fill(-1); // Array to store the path
+    let maxFlow = 0; // There is no flow initially
+
+    // Augment the flow while there is a path from source to sink
+    while (this.#bfs(residualGraph, source, sink, parent)) {
+      // Find the maximum flow through the path found by BFS
+      let pathFlow = Infinity;
+      for (let v = sink; v != source; v = parent[v]) {
+        let u = parent[v];
+        pathFlow = Math.min(pathFlow, residualGraph[u][v]);
+      }
+
+      // Update residual capacities of the edges and reverse edges along the path
+      for (let v = sink; v != source; v = parent[v]) {
+        let u = parent[v];
+        residualGraph[u][v] -= pathFlow;
+        residualGraph[v][u] += pathFlow;
+      }
+
+      // Add the path flow to the overall flow
+      maxFlow += pathFlow;
+    }
+
+    console.log(
+      colorText(`The maximum possible flow is ${maxFlow}`, Colors.fg.seaGreen)
+    );
+
+    return maxFlow;
+  }
+
+  #bfs(residualGraph, source, sink, parent) {
+    let visited = Array(this.size).fill(false);
+    let queue = [];
+    queue.push(source);
+    visited[source] = true;
+    parent[source] = -1;
+
+    while (queue.length > 0) {
+      let u = queue.shift();
+
+      for (let v = 0; v < this.size; v++) {
+        if (!visited[v] && residualGraph[u][v] > 0) {
+          if (v === sink) {
+            parent[v] = u;
+            return true;
+          }
+          queue.push(v);
+          parent[v] = u;
+          visited[v] = true;
+        }
+      }
+    }
+
+    return false;
   }
 }

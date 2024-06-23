@@ -1,7 +1,7 @@
 import { createInterface } from "readline";
 import { Graph, indexToLabel, letterToIndex } from "./graph.mjs";
-import { Colors } from "../colors.mjs";
-import { colorText } from "../colors.mjs";
+import { Colors } from "./colors.mjs";
+import { colorText } from "./colors.mjs";
 
 const rl = createInterface({
   input: process.stdin,
