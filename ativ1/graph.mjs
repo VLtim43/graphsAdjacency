@@ -1,5 +1,5 @@
-import { Colors } from "./colors.mjs";
-import { colorText } from "./colors.mjs";
+import { Colors } from "../colors.mjs";
+import { colorText } from "../colors.mjs";
 
 const MAX_WEIGHT = 15;
 
